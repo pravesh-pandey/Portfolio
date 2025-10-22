@@ -5,6 +5,8 @@ import { nanoid } from "nanoid";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const dataPath = resolve(__dirname, "../..", "data", "briefSubmissions.json");
+const useEphemeralStore = Boolean(process.env.VERCEL);
+const inMemoryEntries = [];
 
 const ensureDataFile = async () => {
   try {
@@ -15,9 +17,15 @@ const ensureDataFile = async () => {
 };
 
 export const saveBrief = async (payload) => {
-  await ensureDataFile();
   const timestamp = new Date().toISOString();
   const entry = { id: nanoid(), timestamp, ...payload };
+
+  if (useEphemeralStore) {
+    inMemoryEntries.unshift(entry);
+    return entry;
+  }
+
+  await ensureDataFile();
   const file = await fs.readFile(dataPath, "utf8");
   const entries = JSON.parse(file);
   entries.unshift(entry);

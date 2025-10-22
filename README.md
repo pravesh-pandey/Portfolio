@@ -64,6 +64,7 @@ Override the value with your hosted backend URL (for example, `https://portfolio
 3. Ensure the output directory is left blank so Vercel serves the Serverless function from `api/index.js`.
 4. Add the environment variables you need (for example `CLIENT_URL=https://<github-username>.github.io/<repo>`).
 5. Vercel will provision an endpoint at `https://<project>.vercel.app/api/brief`; copy this URL into the `VITE_API_BASE_URL` secret for GitHub Pages.
+6. Vercel’s serverless filesystems are ephemeral. The brief submissions are stored in memory during each invocation (see `server/src/lib/briefStore.js`). Connect a database/email pipeline for durable storage if you need persistence.
 
 ## API
 `POST /api/brief`
