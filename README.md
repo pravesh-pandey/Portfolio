@@ -2,6 +2,7 @@
 
 This repository contains a production-ready React + Node.js stack for an immersive, multi-page personal website with a creative 3D hero, motion-rich storytelling, and a full project brief intake flow.
 
+test commit
 ## Stack Overview
 - **Frontend:** React 18, Vite, React Router, Framer Motion, @react-three/fiber/@drei for WebGL hero scenes.
 - **Backend:** Express 4 with Helmet, CORS, Zod validation, and file-backed brief storage.
