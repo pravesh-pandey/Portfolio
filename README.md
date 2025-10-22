@@ -1,114 +1,84 @@
 # Pravesh Pandey — Creative Developer Platform
 
-This repository contains a production-ready React + Node.js stack for an immersive, multi-page personal website with a creative 3D hero, motion-rich storytelling, and a full project brief intake flow.
+<h2> 👋Hi!</h2>     <p align="right"> <img src="https://komarev.com/ghpvc/?username=pravesh-pandey" alt="pravesh-pandey" /> </p>
+<h1> I am Pravesh Pandey</h1>
+<br>
+<p align="left">
+  <h3>
+<img src="https://user-images.githubusercontent.com/58443282/114050007-8ac51980-98a9-11eb-8dea-a162f9c69cb6.png" width="20"> &nbsp; I am a web developer and a Robotics Enthusiast and I like to experiment with new technologies.
+<br>
+<img src="https://user-images.githubusercontent.com/58443282/114054922-e85b6500-98ad-11eb-9394-a59dd6f14a1a.png" width="20"> &nbsp; I have hand on experience in Data Structure and Algorithms.
+    </h3>
+</p>
+<hr>
+<h2>🛠&nbsp;Tech Stack</h2>
 
-test commit
-## Stack Overview
-- **Frontend:** React 18, Vite, React Router, Framer Motion, @react-three/fiber/@drei for WebGL hero scenes.
-- **Backend:** Express 4 with Helmet, CORS, Zod validation, and file-backed brief storage.
-- **Styling:** Custom design system influenced by ten world-class creative studios (Resn, Active Theory, Locomotive, MST Agency, Garden Eight, Hello Monday, Adoratorio, Beyond, Kota, Stink Studios).
+![C](https://img.shields.io/badge/-C-white?style=flat&logo=C&logoColor=A8B9CC)&nbsp;
+![C++](https://img.shields.io/badge/-C++-white?style=flat&logo=C%2B%2B&logoColor=00599C)&nbsp;
+![Python](https://img.shields.io/badge/-Python-white?style=flat&logo=python)&nbsp;
+![JavaScript](https://img.shields.io/badge/-JavaScript-white?style=flat&logo=javascript&logoColor=F7DF1E)&nbsp;
+![react](https://img.shields.io/badge/-React-white?style=flat&logo=React&logoColor=0769AD)&nbsp;
+![Express](https://img.shields.io/badge/-Express-white?style=flat&logo=Express&logoColor=000000)&nbsp;
+![jquery](https://img.shields.io/badge/-jQuery-white?style=flat&logo=jquery&logoColor=0769AD)&nbsp;\
+![Django](https://img.shields.io/badge/-Django-white?style=flat&logo=django&logoColor=brightgreen)&nbsp;
+![Sqlite](https://img.shields.io/badge/-SQLite-white?style=flat&logo=SQLite&logoColor=003B57)&nbsp;
+![Bootstrap](https://img.shields.io/badge/-Bootstrap4-white?style=flat&logo=bootstrap&logoColor=7952B3)&nbsp;
+![HTML](https://img.shields.io/badge/-HTML5-white?style=flat&logo=HTML5&logoColor=E34F26)&nbsp;
+![CSS](https://img.shields.io/badge/-CSS-white?style=flat&logo=CSS3&logoColor=1572B6)&nbsp;
+![Git](https://img.shields.io/badge/-Git-white?style=flat&logo=git)&nbsp;
+![GitHub](https://img.shields.io/badge/-GitHub-white?style=flat&logo=github&logoColor=181717)&nbsp;\
+![Markdown](https://img.shields.io/badge/-Markdown-white?style=flat&logo=markdown&logoColor=000000)
+![Visual Studio Code](https://img.shields.io/badge/-Visual%20Studio%20Code-white?style=flat&logo=visual-studio-code&logoColor=007ACC)&nbsp;
+![Juypter Notebook](https://img.shields.io/badge/-Jupyter%20Notebook-white?style=flat&logo=Jupyter)&nbsp;
+![Arduino](https://img.shields.io/badge/-Arduino-white?style=flat&logo=arduino)&nbsp;\
+![PhotoShop](https://img.shields.io/badge/-Adobe%20Photoshop-white?style=flat&logo=Adobe%20Photoshop&logoColor=31A8FF)&nbsp;
+![ROS](https://img.shields.io/badge/-Robot%20Operating%20System-white?style=flat&logo=ros&logoColor=grey)&nbsp;
+![Bash](https://img.shields.io/badge/-Bash-white?style=flat&logo=Windows-Terminal&logoColor=4D4D4D)&nbsp;
+![Ubuntu](https://img.shields.io/badge/-Linux-white?style=flat&logo=ubuntu&logoColor=orange)&nbsp;
+<hr>
+<h2> ⚙️ GitHub Analytics</h2> 
 
-## Getting Started
+<br>
+<img src="https://github-readme-stats.vercel.app/api?username=pravesh-pandey&show_icons=true&theme=radical" />
 
-### Prerequisites
-- Node.js 18+
+<a href="https://github-readme-stats.vercel.app/api/top-langs/?username=pravesh-pandey&layout=compact&langs_count=8">
+  <img align="center" src="https://github-readme-stats.vercel.app/api/top-langs/?username=pravesh-pandey&layout=compact&langs_count=10&theme=radical" />
+</a>
 
-### Frontend
-```bash
-cd client
-npm install
-npm run dev
-```
-The Vite dev server runs on [http://localhost:5173](http://localhost:5173) and proxies `/api` to the backend.
+<hr>
+<h2> <img src="https://user-images.githubusercontent.com/58443282/114056134-fa89d300-98ae-11eb-885b-a514601bcaa2.png" width="40"> &nbsp;I’m looking to collaborate on Back-end web Development.</h2>
+<hr>
+<h2> <img src="https://user-images.githubusercontent.com/58443282/114053740-d9c07e00-98ac-11eb-9d3a-0e9264366126.png" width="40"> &nbsp; How to reach me:
+</h2>
+<p align="center">
+<a href="https://www.linkedin.com/in/pravesh25/"><img src="https://img.shields.io/badge/-Pravesh%20Pandey%20-0077B5?style=flat&logo=Linkedin&logoColor=white"/></a>
+<a href="mailto:pravesh25pandey@gmail.com"><img src="https://img.shields.io/badge/-pravesh25pandey@gmail.com-D14836?style=flat&logo=Gmail&logoColor=white"/></a>
+<a href="https://www.instagram.com/pravesh__pandey_/"><img src="https://img.shields.io/badge/-pravesh__pandey_-e0f8f9?style=flat&logo=instagram&logoColor=darkpink"/></a>
+</p>
 
-### Backend
-```bash
-cd server
-npm install
-npm run dev
-```
-The Express server listens on [http://localhost:4000](http://localhost:4000) by default.
+Modern personal portfolio built with React (Vite) on the frontend and Express on the backend.
 
-### Environment Variables
-Duplicate `server/.env.example` to `server/.env` (if you create one) to override defaults:
-```
-PORT=4000
-CLIENT_URL=http://localhost:5173
-LOG_FORMAT=dev
-```
+## Highlights
+- **Frontend:** React 18, Vite, React Router, Framer Motion, @react-three/fiber/@drei.
+- **Backend:** Express with Helmet, CORS, Zod validation, Vercel serverless entry point.
+- **Automation:** GitHub Actions for lint/build CI and GitHub Pages deployment.
+- **Hosting:** SPA at `https://pravesh-pandey.github.io/Portfolio/`; API at `https://portfolio-sooty-three-drsylc0s6l.vercel.app/api/`.
 
-Create `client/.env` to point the frontend at your API origin when needed:
-```
-VITE_API_BASE_URL=/api
-```
-Override the value with your hosted backend URL (for example, `https://portfolio-api.vercel.app/api`) once you deploy.
+## Deployment & CI
+- Continuous integration workflow: `.github/workflows/ci.yml`
+- GitHub Pages deployment workflow: `.github/workflows/deploy-client.yml`
+- Step-by-step deployment details and environment variables: `Deployment.md`
 
-### Production Build
-- Frontend: `npm run build` inside `client`, deploy `client/dist` to static hosting.
-- Backend: `npm start` inside `server` after bundling/hosting.
+## Key Routes
+- Frontend pages — `client/src/pages/`
+- API endpoints — `server/src/routes/` (_notably_ `POST /api/brief`, `GET /api/health`)
 
-## Continuous Integration
-- `.github/workflows/ci.yml` runs on every push and pull request to `main`.
-- The workflow installs dependencies for both apps, lints the code, and ensures the frontend build succeeds before merging.
+## Repository Layout
+- `client/` — Vite SPA source
+- `server/` — Express API
+- `Deployment.md` — full CI/CD + hosting guide
 
-## Deployment
-
-### Frontend — GitHub Pages
-1. Push to `main`; the `Deploy Client` workflow builds the Vite app and publishes `client/dist` to GitHub Pages.
-2. In your repository settings, enable Pages and choose “GitHub Actions” as the source.
-3. Set the repository secret `VITE_API_BASE_URL` to your live backend URL (including `/api`). The workflow injects it during the build so the SPA calls the correct API.
-4. The workflow also sets `BASE_PATH` to `/<repo-name>/` so the SPA routes correctly at `https://<username>.github.io/<repo-name>/`. If you rename the repo, redeploy so this value updates automatically.
-
-### Backend — Vercel
-1. In Vercel, “Import Project” from this GitHub repo and choose the `server` directory as the root.
-2. Use the default install command (`npm install`) and build command (`npm run lint` is optional; no build step is required).
-3. Ensure the output directory is left blank so Vercel serves the Serverless function from `api/index.js`.
-4. Add the environment variables you need (for example `CLIENT_URL=https://<github-username>.github.io/<repo>`).
-5. Vercel will provision an endpoint at `https://<project>.vercel.app/api/brief`; copy this URL into the `VITE_API_BASE_URL` secret for GitHub Pages.
-6. Vercel’s serverless filesystems are ephemeral. The brief submissions are stored in memory during each invocation (see `server/src/lib/briefStore.js`). Connect a database/email pipeline for durable storage if you need persistence.
-
-## API
-`POST /api/brief`
-```json
-{
-  "name": "Jane Doe",
-  "email": "jane@company.com",
-  "company": "ACME",
-  "focus": "Search & personalization",
-  "budget": "25k – 60k",
-  "timeline": "Q2 2025",
-  "overview": "Project summary...",
-  "deliverables": "APIs, dashboards",
-  "references": "Design system link",
-  "consent": true
-}
-```
-
-Responses:
-- `201` `{ ok: true, id: "<generated>" }`
-- `422` validation errors array
-- `500` for unexpected issues
-
-All submissions persist to `server/data/briefSubmissions.json` (ignored from git).
-
-## Scripts & Tooling
-- Lint frontend: `npm run lint` (inside `client`)
-- Lint backend: `npm run lint` (inside `server`)
-
-## Repository Setup
-```bash
-git init
-git add .
-git commit -m "Initial project snapshot"
-git branch -M main
-git remote add origin <your-repo-url>
-git push -u origin main
-```
-Once pushed, GitHub Actions and Vercel (after the initial import) will take over deployments automatically.
-
-## Next Steps
-- Connect `/api/brief` to an email/SaaS notification pipeline (SES, Resend, etc.).
-- Extend analytics/SEO (OpenGraph tags, structured data).
-- Harden logging/monitoring for the Vercel deployment (Sentry, Logtail, etc.).
-
-# Portfolio
+## Maintenance Notes
+- Vercel functions use in-memory storage (see `server/src/lib/briefStore.js`); integrate durable storage for production.
+- Update GitHub secret `VITE_API_BASE_URL` if the Vercel domain changes.
+- After renaming the repo, rerun the Pages deploy so `BASE_PATH` refreshes.
