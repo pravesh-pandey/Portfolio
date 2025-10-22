@@ -1,0 +1,79 @@
+.brief-form {
+  display: grid;
+  gap: clamp(1.4rem, 4vw, 2rem);
+}
+
+.brief-form__grid {
+  display: grid;
+  gap: clamp(1rem, 4vw, 1.6rem);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.brief-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.brief-form__field label {
+  font-weight: 600;
+  color: rgba(238, 240, 255, 0.86);
+}
+
+.brief-form__field input,
+.brief-form__field select,
+.brief-form__field textarea {
+  border-radius: 16px;
+  border: 1px solid rgba(124, 77, 255, 0.35);
+  background: rgba(5, 6, 16, 0.85);
+  color: var(--text);
+  padding: 0.85rem 1rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.brief-form__field input:focus,
+.brief-form__field select:focus,
+.brief-form__field textarea:focus {
+  outline: none;
+  border-color: var(--accent-2);
+  box-shadow: 0 0 0 3px rgba(54, 224, 248, 0.22);
+}
+
+.brief-form__field textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+.brief-form__consent {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  color: var(--text-dim);
+}
+
+.brief-form__consent input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+.brief-form__status {
+  margin: 0;
+  padding: 0.95rem 1rem;
+  border-radius: 16px;
+}
+
+.brief-form__status--success {
+  background: rgba(54, 224, 248, 0.12);
+  color: var(--accent-2);
+  border: 1px solid rgba(54, 224, 248, 0.25);
+}
+
+.brief-form__status--error {
+  background: rgba(255, 95, 162, 0.12);
+  color: #ff8bb8;
+  border: 1px solid rgba(255, 95, 162, 0.28);
+}

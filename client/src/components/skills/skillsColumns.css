@@ -1,0 +1,24 @@
+.skills-grid {
+  display: grid;
+  gap: clamp(1.4rem, 4vw, 2rem);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.skills-card {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.skills-card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.skills-card ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
+  color: var(--text-dim);
+}
