@@ -22,7 +22,7 @@ export const SiteFooter = () => {
       <ul className="site-footer__links">
         {footerLinks.map((item) => (
           <li key={item.href}>
-            <a href={item.href} target="_blank" rel="noopener">
+            <a href={item.href} target="_blank" rel="noopener noreferrer">
               {item.label}
             </a>
           </li>
