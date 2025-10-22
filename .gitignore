@@ -1,0 +1,14 @@
+# Dependencies
+client/node_modules
+server/node_modules
+
+# Logs
+*.log
+server/data/briefSubmissions.json
+
+# Build outputs
+client/dist
+
+# Env files
+server/.env
+client/.env
