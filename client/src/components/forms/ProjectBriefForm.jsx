@@ -18,6 +18,7 @@ export const ProjectBriefForm = () => {
   const [formValues, setFormValues] = useState(initialState);
   const [status, setStatus] = useState("idle");
   const [message, setMessage] = useState("");
+  const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? "/api").replace(/\/$/, "");
 
   const updateField = (field, value) => {
     setFormValues((prev) => ({ ...prev, [field]: value }));
@@ -29,7 +30,7 @@ export const ProjectBriefForm = () => {
     setMessage("");
 
     try {
-      const response = await fetch("/api/brief", {
+      const response = await fetch(`${apiBaseUrl}/brief`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formValues)

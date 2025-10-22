@@ -4,6 +4,7 @@ import path from "node:path";
 
 export default defineConfig({
   plugins: [react()],
+  base: "./",
   resolve: {
     alias: {
       "@": path.resolve(path.dirname(new URL(import.meta.url).pathname), "src"),
