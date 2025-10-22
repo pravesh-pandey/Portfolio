@@ -31,11 +31,11 @@ export const createApp = () => {
     })
   );
 
-  app.get("/", (req, res) => {
+  app.get(["/", "/api", "/api/"], (req, res) => {
     res.json({ status: "ok" });
   });
 
-  app.get("/health", (req, res) => {
+  app.get(["/health", "/api/health"], (req, res) => {
     res.json({ status: "ok" });
   });
 
