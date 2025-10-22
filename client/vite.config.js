@@ -2,9 +2,11 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
 
+const basePath = process.env.BASE_PATH ?? "/";
+
 export default defineConfig({
   plugins: [react()],
-  base: "./",
+  base: basePath,
   resolve: {
     alias: {
       "@": path.resolve(path.dirname(new URL(import.meta.url).pathname), "src"),

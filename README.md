@@ -57,6 +57,7 @@ Override the value with your hosted backend URL (for example, `https://portfolio
 1. Push to `main`; the `Deploy Client` workflow builds the Vite app and publishes `client/dist` to GitHub Pages.
 2. In your repository settings, enable Pages and choose “GitHub Actions” as the source.
 3. Set the repository secret `VITE_API_BASE_URL` to your live backend URL (including `/api`). The workflow injects it during the build so the SPA calls the correct API.
+4. The workflow also sets `BASE_PATH` to `/<repo-name>/` so the SPA routes correctly at `https://<username>.github.io/<repo-name>/`. If you rename the repo, redeploy so this value updates automatically.
 
 ### Backend — Vercel
 1. In Vercel, “Import Project” from this GitHub repo and choose the `server` directory as the root.
