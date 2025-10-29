@@ -6,8 +6,8 @@ export const AboutPage = () => (
   <div className="page about">
     <PageIntro
       eyebrow="About"
-      title="Architecting systems that ship with confidence."
-      lead="My fuel is translating ambiguous product goals into measurable delivery—balancing latency, maintainability, and user delight to build software that lasts."
+      title="Building reliable systems that deliver results."
+      lead="I specialize in translating complex requirements into scalable, production-ready solutions. My focus is on performance, maintainability, and delivering measurable business impact."
     />
 
     <section className="about__body glass-panel">
@@ -18,14 +18,15 @@ export const AboutPage = () => (
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
         <p>
-          At Amazon, I lead cross-functional missions for Alexa search. The work ranges from unlocking international
-          pattern matching to modernizing Java microservices—all while keeping service budgets honest and customer
-          experiences crisp. I thrive partnering across product, data science, and infra to stitch cohesive delivery.
+          At Amazon, I work on Alexa's search infrastructure, focusing on international expansion and performance optimization.
+          My responsibilities include architecting microservices, implementing pattern matching algorithms, and modernizing legacy
+          systems. I collaborate with cross-functional teams including product managers, data scientists, and infrastructure
+          engineers to deliver reliable, high-performance solutions.
         </p>
         <p>
-          Previously at nFolks and Phyt Health, I sped up analytics platforms and crafted AI-first experiences piloted
-          by thousands. The throughline: curiosity for how systems behave under real load and empathy for the humans who
-          use, operate, and extend them.
+          Previously, I built high-performance data processing systems at nFolks Data Solutions and developed AI-powered health
+          applications at Phyt Health. Throughout my career, I've focused on understanding system behavior under production load,
+          optimizing performance bottlenecks, and building software that's maintainable and scalable.
         </p>
       </motion.div>
 
@@ -36,12 +37,12 @@ export const AboutPage = () => (
         viewport={{ once: true, margin: "-60px" }}
         transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
       >
-        <h3>What partners rely on</h3>
+        <h3>Key Strengths</h3>
         <ul>
-          <li>Discovery-to-deployment ownership with transparent communication.</li>
-          <li>Systems thinking anchored in data, guardrails, and observability.</li>
-          <li>Ability to mentor, unblock, and align multi-disciplinary pods.</li>
-          <li>Craft that respects both current constraints and future maintainers.</li>
+          <li>End-to-end project ownership from requirements to production deployment.</li>
+          <li>Data-driven decision making with comprehensive system monitoring and metrics.</li>
+          <li>Effective collaboration and communication across technical and non-technical teams.</li>
+          <li>Writing clean, maintainable code with consideration for future scalability.</li>
         </ul>
       </motion.aside>
     </section>

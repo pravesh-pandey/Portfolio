@@ -6,8 +6,8 @@ export const AchievementsPage = () => (
   <div className="page">
     <PageIntro
       eyebrow="Highlights"
-      title="Recognition that reflects momentum."
-      lead="From competition podiums to global certifications, these highlights underline a commitment to both craft and community."
+      title="Achievements and certifications."
+      lead="Recognition from technical competitions, professional certifications, and academic achievements demonstrating continuous learning and technical excellence."
     />
     <AchievementGrid achievements={achievements} />
   </div>

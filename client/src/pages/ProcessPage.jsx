@@ -6,8 +6,8 @@ export const ProcessPage = () => (
   <div className="page">
     <PageIntro
       eyebrow="Approach"
-      title="A four-part playbook from discovery through growth."
-      lead="Borrowing cues from world-class studios, each engagement layers strategic alignment, architectural clarity, iterative momentum, and thoughtful launch support."
+      title="Structured development process for reliable delivery."
+      lead="My approach to software development emphasizes clear planning, scalable architecture, iterative implementation, and production-ready deployment with ongoing support."
     />
     <ProcessSteps steps={processSteps} />
   </div>

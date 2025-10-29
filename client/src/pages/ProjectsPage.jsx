@@ -6,8 +6,8 @@ export const ProjectsPage = () => (
   <div className="page">
     <PageIntro
       eyebrow="Projects"
-      title="Selected builds and experiments."
-      lead="A curated look at systems I’ve crafted—from real-time voice search to AI-guided health experiences—each balancing performance, empathy, and maintainability."
+      title="Selected projects and technical work."
+      lead="Key projects demonstrating my experience in distributed systems, performance optimization, and full-stack development—from scaling voice search infrastructure to building AI-powered applications."
     />
     <ProjectGrid projects={projectShowcase} />
   </div>
