@@ -1,17 +1,4 @@
-export const heroHighlights = [
-  {
-    metric: "18 Locales",
-    description: "Enabled Alexa voice search expansion through optimized pattern matching."
-  },
-  {
-    metric: "15% Reduction",
-    description: "Decreased compute costs by migrating 9 services from JDK8 to JDK17."
-  },
-  {
-    metric: "68% Faster",
-    description: "Improved analytics performance with multi-threaded processing framework."
-  }
-];
+export const heroHighlights = [];
 
 export const experienceTimeline = [
   {

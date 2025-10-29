@@ -1,7 +1,5 @@
 import { motion } from "framer-motion";
 import { PageIntro } from "@components/common/PageIntro.jsx";
-import { MetricGrid } from "@components/common/MetricGrid.jsx";
-import { heroHighlights } from "@data/profile.js";
 import { NavLink } from "react-router-dom";
 import "./homePage.css";
 
@@ -40,7 +38,6 @@ export const HomePage = () => (
           <li>• Data-driven decision making with comprehensive monitoring</li>
         </ul>
       </motion.div>
-      <MetricGrid metrics={heroHighlights} />
     </section>
   </div>
 );
