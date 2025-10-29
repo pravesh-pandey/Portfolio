@@ -10,7 +10,7 @@ export const HomePage = () => (
     <PageIntro
       eyebrow="Software Development Engineer • Amazon"
       title="Building scalable systems that solve real problems."
-      lead="I'm Pravesh Pandey—a Software Development Engineer focused on distributed systems, performance optimization, and delivering measurable impact. I create software that performs at scale."
+      lead="I'm Pravesh Pandey—a Software Development Engineer currently working at Amazon. I focus on distributed systems, performance optimization, and delivering measurable impact. I create software that performs at scale."
       actions={
         <>
           <NavLink className="button button--primary" to="/projects">
@@ -30,7 +30,6 @@ export const HomePage = () => (
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
       >
-        <h2>Engineering excellence through proven impact.</h2>
         <p>
           I build search systems, automation pipelines, and AI-powered applications that deliver measurable results.
           My approach combines deep technical expertise with a focus on performance, reliability, and user experience.
