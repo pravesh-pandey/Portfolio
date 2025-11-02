@@ -18,15 +18,15 @@ export const AboutPage = () => (
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
         <p>
-          At Amazon, I work on Alexa's search infrastructure, focusing on international expansion and performance optimization.
+          At Amazon, I work on Alexa&apos;s search infrastructure, focusing on international expansion and performance optimization.
           My responsibilities include architecting microservices, implementing pattern matching algorithms, and modernizing legacy
           systems. I collaborate with cross-functional teams including product managers, data scientists, and infrastructure
           engineers to deliver reliable, high-performance solutions.
         </p>
         <p>
           Previously, I built high-performance data processing systems at nFolks Data Solutions and developed AI-powered health
-          applications at Phyt Health. Throughout my career, I've focused on understanding system behavior under production load,
-          optimizing performance bottlenecks, and building software that's maintainable and scalable.
+          applications at Phyt Health. Throughout my career, I&apos;ve focused on understanding system behavior under production load,
+          optimizing performance bottlenecks, and building software that&apos;s maintainable and scalable.
         </p>
       </motion.div>
 
