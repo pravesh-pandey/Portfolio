@@ -18,8 +18,8 @@ export const AboutPage = () => (
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
         <p>
-          At Amazon, I work on Alexa&apos;s search infrastructure, focusing on international expansion and performance optimization.
-          My responsibilities include architecting microservices, implementing pattern matching algorithms, and modernizing legacy
+          At Amazon, I work on Alexa&apos;s hotfix infrastructure, focusing on international expansion and performance optimization.
+          My responsibilities include architecting microservices, and modernizing legacy
           systems. I collaborate with cross-functional teams including product managers, data scientists, and infrastructure
           engineers to deliver reliable, high-performance solutions.
         </p>
