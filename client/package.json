@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-three/drei": "^9.107.2",
     "@react-three/fiber": "^8.15.16",
+    "@studio-freight/react-lenis": "^0.0.47",
     "framer-motion": "^11.1.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -25,6 +26,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "playwright-chromium": "^1.57.0",
     "prettier": "^3.2.5",
     "vite": "^5.1.3"
   }

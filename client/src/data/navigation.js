@@ -1,10 +1,10 @@
 export const NAV_ITEMS = [
-  { path: "/", label: "Home" },
+  { path: "#", label: "Home" },
   { path: "/about", label: "About" },
   { path: "/experience", label: "Experience" },
-  { path: "/projects", label: "Projects" },
+  { path: "#projects", label: "Projects" },
   { path: "/skills", label: "Skills" },
   { path: "/achievements", label: "Highlights" },
   { path: "/process", label: "Process" },
-  { path: "/brief", label: "Client Brief" }
+  { path: "#contact", label: "Contact" }
 ];

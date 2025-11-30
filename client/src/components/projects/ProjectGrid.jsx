@@ -33,7 +33,7 @@ export const ProjectGrid = ({ projects }) => (
 
       const cardProps = {
         key: project.title,
-        className: `project-card glass-panel ${project.link ? "project-card--clickable" : ""}`,
+        className: `project-card ${project.link ? "project-card--clickable" : ""}`,
         initial: { opacity: 0, y: 40 },
         whileInView: { opacity: 1, y: 0 },
         viewport: { once: true, margin: "-60px" },

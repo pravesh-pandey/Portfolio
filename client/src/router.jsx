@@ -7,6 +7,7 @@ import { SkillsPage } from "@pages/SkillsPage.jsx";
 import { AchievementsPage } from "@pages/AchievementsPage.jsx";
 import { ProcessPage } from "@pages/ProcessPage.jsx";
 import { BriefPage } from "@pages/BriefPage.jsx";
+import { ContactPage } from "@pages/ContactPage.jsx";
 import { NotFoundPage } from "@pages/NotFoundPage.jsx";
 
 export const AppRoutes = () => (
@@ -15,6 +16,7 @@ export const AppRoutes = () => (
     <Route path="/about" element={<AboutPage />} />
     <Route path="/experience" element={<ExperiencePage />} />
     <Route path="/projects" element={<ProjectsPage />} />
+    <Route path="/contact" element={<ContactPage />} />
     <Route path="/skills" element={<SkillsPage />} />
     <Route path="/achievements" element={<AchievementsPage />} />
     <Route path="/process" element={<ProcessPage />} />
