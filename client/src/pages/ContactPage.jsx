@@ -15,7 +15,7 @@ export const ContactPage = () => {
                     <p>
                         Have a project in mind or just want to say hello?
                         <br />
-                        I'm always open to discussing new opportunities and ideas.
+                        I&apos;m always open to discussing new opportunities and ideas.
                     </p>
                 </div>
 
