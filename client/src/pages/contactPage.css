@@ -81,6 +81,24 @@
   color: var(--bg);
 }
 
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.contact-status {
+  margin-top: 0.75rem;
+  color: var(--text-dim);
+}
+
+.contact-status--success {
+  color: var(--accent-2);
+}
+
+.contact-status--error {
+  color: #ff9b9b;
+}
+
 .contact-info {
   display: flex;
   flex-direction: column;

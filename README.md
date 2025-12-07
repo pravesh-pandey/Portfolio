@@ -71,7 +71,7 @@ Modern personal portfolio built with React (Vite) on the frontend and Express on
 
 ## Key Routes
 - Frontend pages — `client/src/pages/`
-- API endpoints — `server/src/routes/` (_notably_ `POST /api/brief`, `GET /api/health`)
+- API endpoints — `server/src/routes/` (_notably_ `POST /api/brief`, `POST /api/contact`, `GET /api/health`)
 
 ## Repository Layout
 - `client/` — Vite SPA source

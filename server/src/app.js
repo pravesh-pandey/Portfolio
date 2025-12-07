@@ -4,6 +4,7 @@ import cors from "cors";
 import morgan from "morgan";
 import { env } from "./config/env.js";
 import { briefRouter } from "./routes/brief.js";
+import { contactRouter } from "./routes/contact.js";
 import { notFoundHandler } from "./middleware/notFoundHandler.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
@@ -40,6 +41,7 @@ export const createApp = () => {
   });
 
   app.use("/api/brief", briefRouter);
+  app.use("/api/contact", contactRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

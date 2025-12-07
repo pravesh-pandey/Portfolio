@@ -25,6 +25,7 @@ export const SiteHeader = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const resumeHref = `${import.meta.env.BASE_URL}resume.pdf`;
 
   const handleNavClick = (e, path) => {
     e.preventDefault();
@@ -88,7 +89,7 @@ export const SiteHeader = () => {
         <div className="site-header__actions">
           <a
             className="button button--ghost"
-            href="resume.pdf"
+            href={resumeHref}
             target="_blank"
             rel="noopener"
           >
