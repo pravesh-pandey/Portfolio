@@ -91,7 +91,7 @@ export const SiteHeader = () => {
             className="button button--ghost"
             href={resumeHref}
             target="_blank"
-            rel="noopener"
+            rel="noreferrer"
           >
             Resume
           </a>
