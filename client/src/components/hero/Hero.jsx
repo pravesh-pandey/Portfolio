@@ -21,7 +21,7 @@ export const Hero = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
                 >
-                    Creative Developer
+                    Backend Engineer
                     <br />
                     <span className="hero__subtitle">& System Architect</span>
                 </motion.h1>
@@ -32,8 +32,8 @@ export const Hero = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: "easeOut", delay: 0.6 }}
                 >
-                    Building scalable systems and crafting digital experiences that perform at scale.
-                    Focusing on performance, reliability, and minimalist aesthetics.
+                    Building scalable distributed systems and robust backend infrastructure that perform at scale.
+                    Focusing on performance, reliability, and production-grade solutions.
                 </motion.p>
             </motion.div>
 
