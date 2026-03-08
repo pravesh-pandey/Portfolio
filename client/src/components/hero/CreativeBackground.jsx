@@ -17,10 +17,10 @@ const CoreMesh = () => {
     <mesh ref={mesh}>
       <icosahedronGeometry args={[1.5, 2]} />
       <meshStandardMaterial
-        metalness={0.4}
-        roughness={0.18}
-        color={0x7c4dff}
-        emissive={new THREE.Color(0x161c3f)}
+        metalness={0.3}
+        roughness={0.22}
+        color={0xf0d7c0}
+        emissive={new THREE.Color(0x5c7f73)}
         transparent
         opacity={0.92}
       />
@@ -56,8 +56,8 @@ const ParticleField = () => {
       <Points positions={points} stride={3}>
         <PointMaterial
           transparent
-          color={0x36e0f8}
-          size={0.08}
+          color={0x2f6f62}
+          size={0.07}
           sizeAttenuation
           depthWrite={false}
           toneMapped={false}
@@ -78,7 +78,7 @@ const EnergyRing = () => {
   return (
     <mesh ref={ring} rotation={[Math.PI / 2, 0, 0]}>
       <torusGeometry args={[3.5, 0.04, 22, 220]} />
-      <meshBasicMaterial color={0x3650ff} transparent opacity={0.45} />
+      <meshBasicMaterial color={0xd27a45} transparent opacity={0.35} />
     </mesh>
   );
 };
@@ -98,9 +98,9 @@ const generateGradientTexture = () => {
   canvas.width = canvas.height = size;
   const ctx = canvas.getContext("2d");
   const gradient = ctx.createRadialGradient(size / 2, size / 2, size / 4, size / 2, size / 2, size / 1.2);
-  gradient.addColorStop(0, "#121931");
-  gradient.addColorStop(0.55, "#060913");
-  gradient.addColorStop(1, "#03050c");
+  gradient.addColorStop(0, "#f6f1ea");
+  gradient.addColorStop(0.55, "#efe4d5");
+  gradient.addColorStop(1, "#e2d6c7");
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, size, size);
   return canvas;
@@ -108,9 +108,9 @@ const generateGradientTexture = () => {
 
 const BackgroundScene = () => (
   <>
-    <ambientLight intensity={0.8} color={0x6570cc} />
-    <pointLight intensity={1.6} position={[5, 4, 4]} color={0x7c4dff} />
-    <pointLight intensity={1.3} position={[-4, -3, 4]} color={0x36e0f8} />
+    <ambientLight intensity={0.7} color={0xf0dfcf} />
+    <pointLight intensity={1.35} position={[5, 4, 4]} color={0x2f6f62} />
+    <pointLight intensity={1.1} position={[-4, -3, 4]} color={0xd27a45} />
     <CoreMesh />
     <ParticleField />
     <EnergyRing />

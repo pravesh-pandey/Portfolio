@@ -22,7 +22,7 @@
 
 .timeline__meta span {
   font-weight: 600;
-  color: var(--accent-2);
+  color: var(--accent);
 }
 
 .timeline__period {

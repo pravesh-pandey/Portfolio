@@ -18,13 +18,14 @@
 }
 
 .about__traits {
-  background: rgba(10, 10, 10, 0.8);
+  background: var(--surface-alt);
   border-radius: var(--corner-lg);
-  border: 1px solid rgba(124, 77, 255, 0.22);
+  border: 1px solid rgba(var(--accent-rgb), 0.2);
   padding: clamp(1.2rem, 3.8vw, 1.9rem);
   width: 100%;
   max-width: 520px;
   margin-left: auto;
+  box-shadow: var(--shadow-2);
 }
 
 .about__traits h3 {
@@ -37,7 +38,7 @@
   margin: 0;
   display: grid;
   gap: 0.75rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-dim);
 }
 
 @media (max-width: 1100px) {

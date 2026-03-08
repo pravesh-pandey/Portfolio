@@ -1,3 +1,4 @@
 .three-wrapper canvas {
-  filter: saturate(1.15);
+  filter: saturate(1.05) contrast(1.03);
+  opacity: 0.9;
 }

@@ -11,7 +11,7 @@
 .hero__content {
   position: relative;
   z-index: 10;
-  text-align: center;
+  text-align: left;
   max-width: 1200px;
 }
 
@@ -23,7 +23,7 @@
   letter-spacing: -0.04em;
   color: var(--text);
   margin-bottom: 2rem;
-  background: linear-gradient(to bottom, #ffffff, #888888);
+  background: linear-gradient(120deg, var(--accent-3) 10%, var(--accent) 55%, var(--accent-2) 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -32,7 +32,7 @@
 .hero__subtitle {
   font-size: clamp(1.5rem, 4vw, 4rem);
   font-weight: 400;
-  color: var(--text-dim);
+  color: rgba(28, 26, 22, 0.72);
   display: block;
   margin-top: 0.5rem;
 }
@@ -41,7 +41,7 @@
   font-size: clamp(1rem, 1.5vw, 1.2rem);
   color: var(--text-dim);
   max-width: 600px;
-  margin: 0 auto;
+  margin: 0;
   line-height: 1.6;
 }
 
@@ -59,7 +59,17 @@
   transform: translate(-50%, -50%);
   width: 60vw;
   height: 60vw;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(var(--accent-2-rgb), 0.18) 0%, transparent 70%);
   border-radius: 50%;
   filter: blur(100px);
+}
+
+@media (max-width: 900px) {
+  .hero__content {
+    text-align: center;
+  }
+
+  .hero__description {
+    margin: 0 auto;
+  }
 }

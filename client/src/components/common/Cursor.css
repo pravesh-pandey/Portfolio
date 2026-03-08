@@ -4,11 +4,11 @@
   left: 0;
   width: 8px;
   height: 8px;
-  background-color: var(--accent-2);
+  background-color: var(--accent);
   border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
-  mix-blend-mode: difference;
+  mix-blend-mode: multiply;
 }
 
 .cursor-ring {
@@ -21,14 +21,14 @@
   border-radius: 50%;
   pointer-events: none;
   z-index: 9998;
-  mix-blend-mode: difference;
+  mix-blend-mode: multiply;
   transition: width 0.3s ease, height 0.3s ease, background-color 0.3s ease;
 }
 
 .cursor-ring.hovered {
   width: 48px;
   height: 48px;
-  background-color: rgba(212, 175, 55, 0.1);
+  background-color: rgba(var(--accent-2-rgb), 0.16);
   border-color: transparent;
 }
 
