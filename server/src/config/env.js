@@ -11,5 +11,7 @@ export const env = {
   nodeEnv: process.env.NODE_ENV ?? "development",
   port: parsePort(process.env.PORT, 4000),
   clientUrl: process.env.CLIENT_URL ?? "http://localhost:5173",
-  logFormat: process.env.LOG_FORMAT ?? "dev"
+  logFormat: process.env.LOG_FORMAT ?? "dev",
+  resendApiKey: process.env.RESEND_API_KEY ?? "",
+  contactEmail: process.env.CONTACT_EMAIL ?? "pravesh.pandey.mnnit@gmail.com"
 };
