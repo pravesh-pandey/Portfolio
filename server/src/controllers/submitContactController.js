@@ -3,8 +3,6 @@ import { contactSchema } from "../validators/contactSchema.js";
 import { saveContact } from "../lib/contactStore.js";
 import { env } from "../config/env.js";
 
-const resend = new Resend(env.resendApiKey);
-
 export const submitContactController = async (req, res, next) => {
   try {
     const parsed = contactSchema.parse(req.body);
@@ -16,6 +14,7 @@ export const submitContactController = async (req, res, next) => {
     });
 
     if (env.resendApiKey) {
+      const resend = new Resend(env.resendApiKey);
       await resend.emails.send({
         from: "Portfolio Contact <onboarding@resend.dev>",
         to: env.contactEmail,
