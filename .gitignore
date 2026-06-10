@@ -12,3 +12,4 @@ client/dist
 # Env files
 server/.env
 client/.env
+.superpowers/
