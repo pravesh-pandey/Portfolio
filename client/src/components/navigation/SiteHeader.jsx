@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import { motion, useScroll, useMotionValueEvent } from "framer-motion";
+import { motion, useScroll, useMotionValueEvent, useReducedMotion } from "framer-motion";
 import { NAV_ITEMS } from "@data/navigation.js";
 import "./siteHeader.css";
 
@@ -25,34 +25,38 @@ export const SiteHeader = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const reduceMotion = useReducedMotion();
   const resumeHref = `${import.meta.env.BASE_URL}resume.pdf`;
+  const scrollBehavior = reduceMotion ? "instant" : "smooth";
 
   const handleNavClick = (e, path) => {
     e.preventDefault();
     closeMenu();
 
-    if (path.startsWith("#")) {
+    if (!path.startsWith("#")) {
+      navigate(path);
+      return;
+    }
+
+    if (path === "#") {
       if (location.pathname === "/") {
-        // On home page, just scroll
-        const element = document.querySelector(path === "#" ? "body" : path);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
-        }
+        window.scrollTo({ top: 0, behavior: scrollBehavior });
       } else {
-        // Not on home page, go home then scroll (handled by useEffect or hash)
-        // For simplicity, we'll navigate to "/" + path which might not work if it's just #id
-        // Better: navigate to "/" and let a useEffect handle the hash, or navigate to "/#id"
-        navigate("/" + path);
-        // Note: React Router might not handle scrolling to hash automatically on transition.
-        // We might need a separate mechanism, but for now this is better than full reload.
-        // Actually, let's just use window.location.hash logic if we navigate to home.
-        setTimeout(() => {
-          const element = document.querySelector(path === "#" ? "body" : path);
-          if (element) element.scrollIntoView({ behavior: "smooth" });
-        }, 100);
+        navigate("/");
+      }
+      return;
+    }
+
+    if (location.pathname === "/") {
+      if (location.hash === path) {
+        // Same hash: navigation would be a no-op, so scroll directly.
+        document.getElementById(path.slice(1))?.scrollIntoView({ behavior: scrollBehavior });
+      } else {
+        // Keep the URL hash in sync; useHashScroll performs the scroll.
+        navigate(path);
       }
     } else {
-      navigate(path);
+      navigate(`/${path}`);
     }
   };
 

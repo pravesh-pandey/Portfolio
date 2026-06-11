@@ -158,6 +158,9 @@
   .site-nav--open .site-nav__item:nth-child(2) { transition-delay: 0.15s; }
   .site-nav--open .site-nav__item:nth-child(3) { transition-delay: 0.2s; }
   .site-nav--open .site-nav__item:nth-child(4) { transition-delay: 0.25s; }
+  .site-nav--open .site-nav__item:nth-child(5) { transition-delay: 0.3s; }
+  .site-nav--open .site-nav__item:nth-child(6) { transition-delay: 0.35s; }
+  .site-nav--open .site-nav__item:nth-child(7) { transition-delay: 0.4s; }
 
   .site-nav__link {
     font-size: 1.1rem;
