@@ -1,4 +1,9 @@
-export const heroHighlights = [];
+export const impactMetrics = [
+  { value: 60, suffix: "% → 0%", label: "Alexa CET failure rate eliminated for onboarded teams" },
+  { value: 260, suffix: " hr", label: "Engineering effort saved across 60+ teams" },
+  { value: 15, suffix: "%", label: "Compute costs cut by migrating 9 services to JDK17" },
+  { value: 68, suffix: "%", label: "Faster database retrieval via parallel processing" }
+];
 
 export const experienceTimeline = [
   {
@@ -7,11 +12,12 @@ export const experienceTimeline = [
     period: "May 2024 – Present",
     location: "Bangalore, India",
     outcomes: [
-      "Enabled Alexa voice search expansion to 18 international locales by optimizing pattern matching algorithms and reducing binary load latency.",
-      "Designed and implemented a SearchComponent that improved query throughput and reduced response times.",
-      "Led migration of 9 microservices from JDK8 to JDK17, reducing compute costs by 15% through modern JVM features and garbage collection improvements."
+      "Led end-to-end development of LangForge Automation — winner of the Alexa AI AIDo Frugal Frontrunner Award — cutting CET failure rates from 60% to 0% for onboarded expert teams and saving 260 hours of effort across 60+ teams.",
+      "Enabled Pattern Match support for multi-locale Alexa+ expansion by implementing context-based FST binary building and filtering across 4 services, with locale-based binary separation to reduce binary load and search time.",
+      "Contributed to the Clarity platform, which provides Classic Alexa NLU signals for deterministic inference — improving accuracy, latency, and capacity usage.",
+      "Led migration of 9 microservices from JDK8 to JDK17, reducing compute costs by 15% through modern JVM features."
     ],
-    stack: ["Java", "AWS", "DynamoDB", "Microservices", "Distributed Systems"]
+    stack: ["Java", "AWS", "DynamoDB", "S3", "CDK", "Microservices", "Distributed Systems"]
   },
   {
     role: "Software Engineer",
@@ -39,6 +45,56 @@ export const experienceTimeline = [
 
 export const projectShowcase = [
   {
+    title: "AI Sudoku Solver",
+    tagline: "Computer vision-based puzzle recognition and solving.",
+    description:
+      "Developed end-to-end system using TensorFlow and OpenCV to detect, recognize, and solve Sudoku puzzles from camera input with high accuracy.",
+    bullets: [
+      "Trained custom convolutional neural network to recognize handwritten and printed digits across multiple fonts and writing styles.",
+      "Integrated computer vision preprocessing with constraint satisfaction algorithms for reliable puzzle solving."
+    ],
+    stack: ["Python", "TensorFlow", "OpenCV", "Deep Learning"],
+    featured: true
+  },
+  {
+    title: "IMME Conference Platform",
+    tagline: "Full-stack conference management system.",
+    description:
+      "Built comprehensive conference management platform serving 1,000+ attendees with real-time session updates, speaker profiles, and attendee feedback system.",
+    bullets: [
+      "Developed modular CMS enabling non-technical staff to manage content and schedules.",
+      "Created responsive front-end optimized for mobile devices and varying network conditions."
+    ],
+    stack: ["HTML", "CSS", "JavaScript", "Bootstrap", "Python", "SQL"],
+    featured: true
+  },
+  {
+    title: "TamperScripts Collection",
+    tagline: "Browser automation scripts for enhanced web functionality.",
+    description:
+      "Developed collection of userscripts enhancing browser functionality across popular websites, supporting Chrome, Firefox, Edge, Safari, and Opera.",
+    bullets: [
+      "Built Amazon/Flipkart price tracking widget, shortlink bypass for 100+ services, and web restriction remover.",
+      "Created Codeforces optimization helper displaying solutions sorted by execution time."
+    ],
+    stack: ["JavaScript", "Tampermonkey", "Browser APIs"],
+    link: "https://github.com/pravesh-pandey/TamperScripts",
+    featured: true
+  },
+  {
+    title: "Cell Phone Controlled Car",
+    tagline: "IoT-based robotic car with smartphone control.",
+    description:
+      "Designed three-wheeled robotic car controlled via smartphone accelerometer data transmitted over WiFi, demonstrating practical IoT integration.",
+    bullets: [
+      "Integrated Arduino UNO and NodeMCU with L298N motor driver for real-time wireless motor control.",
+      "Developed MIT App Inventor mobile application transmitting accelerometer data every 100ms for responsive steering."
+    ],
+    stack: ["Arduino", "NodeMCU", "MIT App Inventor", "C++", "IoT"],
+    link: "https://github.com/pravesh-pandey/Cell_Phone_Controlled_car",
+    featured: true
+  },
+  {
     title: "Digital Marketing Portfolio Website",
     tagline: "Modern single-page portfolio with JSON-based content management.",
     description:
@@ -51,30 +107,6 @@ export const projectShowcase = [
     link: "https://github.com/pravesh-pandey/Digital-Marketing-Website"
   },
   {
-    title: "TamperScripts Collection",
-    tagline: "Browser automation scripts for enhanced web functionality.",
-    description:
-      "Developed collection of userscripts enhancing browser functionality across popular websites, supporting Chrome, Firefox, Edge, Safari, and Opera.",
-    bullets: [
-      "Built Amazon/Flipkart price tracking widget, shortlink bypass for 100+ services, and web restriction remover.",
-      "Created Codeforces optimization helper displaying solutions sorted by execution time."
-    ],
-    stack: ["JavaScript", "Tampermonkey", "Browser APIs"],
-    link: "https://github.com/pravesh-pandey/TamperScripts"
-  },
-  {
-    title: "Cell Phone Controlled Car",
-    tagline: "IoT-based robotic car with smartphone control.",
-    description:
-      "Designed three-wheeled robotic car controlled via smartphone accelerometer data transmitted over WiFi, demonstrating practical IoT integration.",
-    bullets: [
-      "Integrated Arduino UNO and NodeMCU with L298N motor driver for real-time wireless motor control.",
-      "Developed MIT App Inventor mobile application transmitting accelerometer data every 100ms for responsive steering."
-    ],
-    stack: ["Arduino", "NodeMCU", "MIT App Inventor", "C++", "IoT"],
-    link: "https://github.com/pravesh-pandey/Cell_Phone_Controlled_car"
-  },
-  {
     title: "Covin Web Application",
     tagline: "Full-stack web application with Vite and Node.js.",
     description:
@@ -85,28 +117,6 @@ export const projectShowcase = [
     ],
     stack: ["JavaScript", "Vite", "Node.js", "Express", "CSS", "HTML"],
     link: "https://github.com/pravesh-pandey/covin"
-  },
-  {
-    title: "IMME Conference Platform",
-    tagline: "Full-stack conference management system.",
-    description:
-      "Built comprehensive conference management platform serving 1,000+ attendees with real-time session updates, speaker profiles, and attendee feedback system.",
-    bullets: [
-      "Developed modular CMS enabling non-technical staff to manage content and schedules.",
-      "Created responsive front-end optimized for mobile devices and varying network conditions."
-    ],
-    stack: ["HTML", "CSS", "JavaScript", "Bootstrap", "Python", "SQL"]
-  },
-  {
-    title: "AI Sudoku Solver",
-    tagline: "Computer vision-based puzzle recognition and solving.",
-    description:
-      "Developed end-to-end system using TensorFlow and OpenCV to detect, recognize, and solve Sudoku puzzles from camera input with high accuracy.",
-    bullets: [
-      "Trained custom convolutional neural network to recognize handwritten and printed digits across multiple fonts and writing styles.",
-      "Integrated computer vision preprocessing with constraint satisfaction algorithms for reliable puzzle solving."
-    ],
-    stack: ["Python", "TensorFlow", "OpenCV", "Deep Learning"]
   },
   {
     title: "STOCKHOLM_PARING",
@@ -139,35 +149,53 @@ export const skillsMatrix = [
     title: "Systems & Backend",
     items: [
       "Microservices architecture • Distributed systems • Event-driven design",
-      "RESTful APIs • CI/CD pipelines • AWS cloud services",
+      "RESTful & GraphQL APIs • CI/CD pipelines • AWS & Azure",
       "Performance optimization • System observability • Cost reduction"
     ]
   },
   {
     title: "Languages & Frameworks",
-    items: ["Java • Python • C/C++ • JavaScript/TypeScript", "React • Flask • Node.js • Express", "TensorFlow • OpenCV"]
+    items: [
+      "Java • Python • C/C++ • C#/.NET • JavaScript/TypeScript",
+      "React • Node.js • Express • Flask",
+      "SQL • Automation scripting"
+    ]
   },
   {
-    title: "Data & DevOps",
-    items: ["MySQL • DynamoDB • MongoDB • Redis", "Docker • Jenkins • GitHub Actions", "Build automation • Infrastructure management"]
+    title: "Data, AI & DevOps",
+    items: [
+      "MySQL • DynamoDB • MongoDB • Redis",
+      "LangChain • RAG • TensorFlow • OpenCV",
+      "Docker • Jenkins • GitHub Actions"
+    ]
   }
 ];
 
 export const achievements = [
   {
-    title: "Top 3 — IIT BHU Technex Maze Explorer",
-    summary: "Developed autonomous robot navigation system, placing in top 3 at national robotics competition.",
-    year: "2020"
+    title: "Alexa AI AIDo Frugal Frontrunner Award",
+    summary: "Amazon recognition for leading LangForge Automation end-to-end.",
+    year: "2025"
+  },
+  {
+    title: "Extra Mile Award — Amazon",
+    summary: "Recognized for exceptional customer obsession and delivery excellence.",
+    year: "2025"
   },
   {
     title: "Winner — Prosang Project Exhibition",
-    summary: "First place at MNNIT project exhibition for innovative technical solution.",
-    year: "2020"
+    summary: "First place at MNNIT Allahabad's project exhibition for an innovative technical solution.",
+    year: "2023"
   },
   {
     title: "MongoDB Certified Developer",
-    summary: "Completed MongoDB certification demonstrating expertise in database design and operations.",
+    summary: "Completed MongoDB specialization certification (MongoDB, Inc).",
     year: "2023"
+  },
+  {
+    title: "Top 3 — IIT BHU Technex Maze Explorer",
+    summary: "Developed autonomous robot navigation system, placing in top 3 at national robotics competition.",
+    year: "2020"
   },
   {
     title: "Algorithms Specialization",
