@@ -1,101 +1,19 @@
 .home {
+  width: 100%;
+}
+
+.home__sections {
   display: flex;
   flex-direction: column;
-  gap: clamp(2.5rem, 6vw, 4rem);
-  padding: 0;
-  width: 100%;
-  margin: 0;
-  max-width: none;
-}
-
-.home-stack {
-  position: relative;
-  height: 200vh;
-  width: 100%;
-  margin: 0 auto;
-}
-
-.home-stack__sticky {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow: hidden;
-  border-radius: var(--corner-xl);
-}
-
-.home-stack__panel {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
-}
-
-.home-stack__panel--second {
-  padding: clamp(2.5rem, 6vw, 4rem);
-  background:
-    radial-gradient(circle at 18% 18%, rgba(var(--accent-rgb), 0.18), transparent 45%),
-    radial-gradient(circle at 82% 82%, rgba(var(--accent-2-rgb), 0.16), transparent 45%),
-    linear-gradient(140deg, rgba(255, 255, 255, 0.96), rgba(242, 235, 226, 0.95));
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.home-next {
-  width: min(calc(100% - 2rem), 900px);
-  display: grid;
-  gap: 0.85rem;
-  padding: clamp(1.8rem, 4vw, 2.4rem);
-}
-
-.home-next__eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.35rem 0.85rem;
-  font-size: 0.76rem;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: var(--accent);
-  border-radius: 999px;
-  background: rgba(var(--accent-rgb), 0.12);
-}
-
-.home-next__title {
-  font-size: clamp(2.4rem, 6vw, 3.6rem);
-  margin: 0;
-}
-
-.home-next__lead {
-  font-size: clamp(1rem, 2vw, 1.2rem);
-  color: var(--text-dim);
-  margin: 0;
-}
-
-.home-stack__tagline {
-  margin: clamp(1.5rem, 4vw, 2.5rem) 0 0;
-  font-size: clamp(1.4rem, 4vw, 2rem);
-  color: var(--accent);
-  letter-spacing: -0.01em;
-  text-align: center;
+  gap: clamp(4rem, 9vw, 7rem);
 }
 
 .home-section {
-  scroll-margin-top: clamp(4rem, 8vw, 6rem);
+  scroll-margin-top: clamp(4.5rem, 10vw, 6.5rem);
 }
 
-@media (max-width: 768px) {
-  .home-stack {
-    height: 180vh;
-  }
-
-  .home-stack__panel--second {
-    padding: clamp(1.5rem, 6vw, 2.5rem);
-  }
-
-  .home-next {
-    padding: clamp(1.2rem, 5vw, 1.8rem);
-  }
+.featured-projects__more {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(1.6rem, 4vw, 2.4rem);
 }
