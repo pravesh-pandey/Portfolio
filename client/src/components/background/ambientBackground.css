@@ -1,0 +1,43 @@
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ambient__field {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ambient__field {
+    will-change: transform;
+  }
+}
+
+.ambient__field--teal {
+  width: 48vw;
+  height: 48vw;
+  top: -12vw;
+  left: -10vw;
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.2), transparent 65%);
+}
+
+.ambient__field--terracotta {
+  width: 42vw;
+  height: 42vw;
+  top: 30vh;
+  right: -12vw;
+  background: radial-gradient(circle, rgba(var(--accent-2-rgb), 0.18), transparent 65%);
+}
+
+.ambient__field--ink {
+  width: 40vw;
+  height: 40vw;
+  bottom: -15vw;
+  left: 20vw;
+  background: radial-gradient(circle, rgba(var(--ink-glow-rgb), 0.12), transparent 65%);
+}

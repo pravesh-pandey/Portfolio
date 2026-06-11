@@ -9,6 +9,7 @@
   --accent-3: #1c1a16;
   --accent-rgb: 47, 111, 98;
   --accent-2-rgb: 210, 122, 69;
+  --ink-glow-rgb: 28, 55, 60;
   --text: #1c1a16;
   --text-dim: rgba(45, 39, 31, 0.72);
   --border: rgba(43, 36, 28, 0.14);
@@ -22,7 +23,7 @@
   --corner-md: 12px;
   --glow: radial-gradient(circle at 18% 8%, rgba(47, 111, 98, 0.18), transparent 55%),
     radial-gradient(circle at 82% 0%, rgba(210, 122, 69, 0.2), transparent 50%),
-    radial-gradient(circle at 50% 88%, rgba(28, 55, 60, 0.12), transparent 60%);
+    radial-gradient(circle at 50% 88%, rgba(var(--ink-glow-rgb), 0.12), transparent 60%);
 }
 
 *,
@@ -284,14 +285,6 @@ main {
   margin: 0.35rem 0 0;
   color: var(--text-dim);
   font-size: 0.95rem;
-}
-
-.three-wrapper {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.55;
 }
 
 .scroll-progress {
