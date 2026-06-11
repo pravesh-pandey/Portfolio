@@ -1,0 +1,130 @@
+.contact__container {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.2);
+}
+
+.submit-btn {
+  align-self: flex-start;
+  background: linear-gradient(120deg, var(--accent), var(--accent-2));
+  border: none;
+  color: #fff8f0;
+  padding: 0.8rem 2rem;
+  border-radius: 999px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 30px rgba(var(--accent-2-rgb), 0.3);
+}
+
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.submit-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.contact-status {
+  margin: 0;
+  color: var(--text-dim);
+}
+
+/* The live region stays mounted while empty; cancel the container gap so it
+   has no visual footprint until a status message lands. */
+.contact-status:empty {
+  margin-top: -2.4rem;
+}
+
+.contact-status--success {
+  color: var(--accent);
+}
+
+.contact-status--error {
+  color: #b42318;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-top: 1px solid var(--border);
+  padding-top: 2rem;
+}
+
+.contact-link {
+  color: var(--text);
+  font-size: 1.1rem;
+  transition: color 0.3s ease;
+}
+
+.contact-link:hover {
+  color: var(--accent);
+}
+
+.social-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.social-links a {
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  transition: color 0.3s ease;
+}
+
+.social-links a:hover {
+  color: var(--accent);
+}
