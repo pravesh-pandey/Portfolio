@@ -179,29 +179,41 @@ main {
   color: var(--text-dim);
 }
 
-.glass-panel {
-  background: var(--surface);
-  border-radius: var(--corner-xl);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-1);
-  padding: clamp(1.8rem, 4vw, 2.6rem);
-  position: relative;
-  overflow: hidden;
-  backdrop-filter: blur(18px);
+.section-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin-bottom: clamp(1.8rem, 4vw, 2.8rem);
 }
 
-.glass-panel::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    120deg,
-    rgba(var(--accent-rgb), 0.12),
-    rgba(var(--accent-2-rgb), 0.18)
-  );
-  mix-blend-mode: multiply;
-  opacity: 0.35;
-  pointer-events: none;
+.section-heading__label {
+  font-size: 0.8rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.section-heading__title {
+  font-size: clamp(1.9rem, 4.2vw, 3rem);
+  margin: 0;
+  max-width: 22ch;
+}
+
+.section-heading__lead {
+  font-size: 1.08rem;
+  color: var(--text-dim);
+  max-width: 640px;
+  margin: 0;
+}
+
+.glass-panel {
+  background: var(--card);
+  border-radius: var(--corner-xl);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-2);
+  padding: clamp(1.8rem, 4vw, 2.6rem);
+  position: relative;
 }
 
 .grid {
