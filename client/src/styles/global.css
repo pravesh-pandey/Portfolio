@@ -187,6 +187,7 @@ main {
 }
 
 .section-heading__label {
+  margin: 0;
   font-size: 0.8rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;

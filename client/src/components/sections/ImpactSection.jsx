@@ -14,7 +14,7 @@ export const ImpactSection = () => {
     <section id="impact" className="home-section impact" ref={ref}>
       <div className="impact__sticky">
         <Reveal className="impact__panel glass-panel">
-          <span className="section-heading__label">Impact, measured</span>
+          <h2 className="section-heading__label">Impact, measured</h2>
           <dl className="impact__grid">
             {impactMetrics.map((metric) => (
               <div className="impact__metric" key={metric.label}>
