@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="495" height="195" role="img" aria-label="Top languages will be refreshed automatically">
+  <rect width="495" height="195" rx="12" fill="#1f1b2e"/>
+  <text x="32" y="72" fill="#f8f7ff" font-family="Arial, sans-serif" font-size="22" font-weight="700">Top languages</text>
+  <text x="32" y="108" fill="#c9c1e8" font-family="Arial, sans-serif" font-size="15">Refreshing automatically with GitHub Actions</text>
+  <text x="32" y="144" fill="#a78bfa" font-family="monospace" font-size="13">profile/top-langs.svg</text>
+</svg>
