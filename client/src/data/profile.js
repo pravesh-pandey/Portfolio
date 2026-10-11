@@ -45,6 +45,54 @@ export const experienceTimeline = [
 
 export const projectShowcase = [
   {
+    title: "FlowPulse",
+    tagline: "Real-time institutional order-flow detection for NSE options and MCX.",
+    description:
+      "C++20 engine that monitors NIFTY, BANKNIFTY and FINNIFTY options and MCX commodities, flags large institutional orders in real time, and paper-trades the signals with realistic P&L tracking.",
+    bullets: [
+      "Computes market microstructure metrics — Order Flow Imbalance (OFI), microprice and VPIN — with a predictive model for 10-minute return forecasting.",
+      "Paper-trades alerts with full NSE F&O charges and lot sizes, persists alerts and trades to PostgreSQL, and sends Telegram alerts whose feedback auto-calibrates detection thresholds."
+    ],
+    stack: ["C++20", "CMake", "PostgreSQL", "Grafana", "Docker", "Telegram API"],
+    featured: true
+  },
+  {
+    title: "Options Backtester for Indian F&O",
+    tagline: "Minute-level options backtesting and probability research.",
+    description:
+      "Backtesting platform for NSE index options that replays strategies minute by minute on archived index and option-chain data, applying Indian F&O charges to every order.",
+    bullets: [
+      "Deterministic simulation where strategies only see completed bars, plus a parallel sweep across strategies, parameters, strike offsets and risk settings.",
+      "Walk-forward research with Fixed Share algorithm weights and purged chronological validation to avoid look-ahead bias."
+    ],
+    stack: ["Python", "FastAPI", "pandas", "NumPy", "Parquet"],
+    featured: true
+  },
+  {
+    title: "LocalCache",
+    tagline: "Disk-backed cache with O(1) lookups and Redis-like ergonomics.",
+    description:
+      "Filesystem-backed cache that stores entries as sharded, hash-addressed files so lookups stay O(1) as the cache grows, without keeping an in-memory index.",
+    bullets: [
+      "Crash-safe atomic writes (temp file + rename, optional fsync) and POSIX file locking for concurrent access.",
+      "TTL support, batch operations, and background eviction driven by an append-only access journal to keep RAM use low."
+    ],
+    stack: ["Java", "Python", "File Systems", "Concurrency"],
+    link: "https://github.com/pravesh-pandey/LocalCache",
+    featured: true
+  },
+  {
+    title: "Market Depth Trading Bot",
+    tagline: "Order-book analysis and paper trading on the Groww API.",
+    description:
+      "Java service that monitors live market depth, detects institutional orders and order-book imbalances, and executes paper trades through the Groww API.",
+    bullets: [
+      "Detects large orders, buy/sell imbalances above a configurable threshold, order clustering at price levels, and sudden depth changes.",
+      "Paper-trading engine with portfolio and P&L tracking, market and limit orders, and full trade history, exposed through a REST API."
+    ],
+    stack: ["Java", "Spring Boot", "JPA", "REST APIs"]
+  },
+  {
     title: "AI Sudoku Solver",
     tagline: "Computer vision-based puzzle recognition and solving.",
     description:
@@ -65,8 +113,7 @@ export const projectShowcase = [
       "Developed modular CMS enabling non-technical staff to manage content and schedules.",
       "Created responsive front-end optimized for mobile devices and varying network conditions."
     ],
-    stack: ["HTML", "CSS", "JavaScript", "Bootstrap", "Python", "SQL"],
-    featured: true
+    stack: ["HTML", "CSS", "JavaScript", "Bootstrap", "Python", "SQL"]
   },
   {
     title: "TamperScripts Collection",
@@ -78,8 +125,7 @@ export const projectShowcase = [
       "Created Codeforces optimization helper displaying solutions sorted by execution time."
     ],
     stack: ["JavaScript", "Tampermonkey", "Browser APIs"],
-    link: "https://github.com/pravesh-pandey/TamperScripts",
-    featured: true
+    link: "https://github.com/pravesh-pandey/TamperScripts"
   },
   {
     title: "Cell Phone Controlled Car",
@@ -91,8 +137,7 @@ export const projectShowcase = [
       "Developed MIT App Inventor mobile application transmitting accelerometer data every 100ms for responsive steering."
     ],
     stack: ["Arduino", "NodeMCU", "MIT App Inventor", "C++", "IoT"],
-    link: "https://github.com/pravesh-pandey/Cell_Phone_Controlled_car",
-    featured: true
+    link: "https://github.com/pravesh-pandey/Cell_Phone_Controlled_car"
   },
   {
     title: "Digital Marketing Portfolio Website",

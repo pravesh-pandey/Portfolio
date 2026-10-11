@@ -10,7 +10,7 @@ export const FeaturedProjectsSection = () => (
       number="03"
       label="Projects"
       title="Selected work."
-      lead="Four favorites across AI, automation, IoT, and full-stack builds."
+      lead="Four favorites across trading systems, infrastructure, and AI."
     />
     <ProjectGrid projects={projectShowcase.filter((project) => project.featured)} />
     <Reveal className="featured-projects__more" delay={0.1}>

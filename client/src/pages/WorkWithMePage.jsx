@@ -33,6 +33,12 @@ export const WorkWithMePage = () => (
           Prefer direct contact?{" "}
           <a href="mailto:pravesh.pandey.mnnit@gmail.com">pravesh.pandey.mnnit@gmail.com</a>
         </div>
+        <div className="brief__contact">
+          Prefer to hire through Upwork?{" "}
+          <a href="https://www.upwork.com/freelancers/~0189bb4c7f00dbde1e" target="_blank" rel="noopener noreferrer">
+            Hire me on Upwork →
+          </a>
+        </div>
       </div>
       <ProjectBriefForm />
     </section>

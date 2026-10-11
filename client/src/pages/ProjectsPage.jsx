@@ -7,7 +7,7 @@ export const ProjectsPage = () => (
     <PageIntro
       eyebrow="Projects"
       title="All projects."
-      lead="Everything from AI and computer vision to IoT, automation, and full-stack builds."
+      lead="Everything from trading systems and infrastructure to AI, IoT, automation, and full-stack builds."
     />
     <ProjectGrid projects={projectShowcase} />
   </div>

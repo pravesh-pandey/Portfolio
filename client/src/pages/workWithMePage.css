@@ -7,6 +7,7 @@
 .brief__info {
   display: grid;
   gap: 1rem;
+  align-content: start;
 }
 
 .brief__info h2 {

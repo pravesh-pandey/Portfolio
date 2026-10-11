@@ -51,7 +51,7 @@ const run = async () => {
   }
 
   await page.goto(`${BASE}/projects`, { waitUntil: "networkidle" });
-  check("projects page shows 8 cards", (await page.locator(".project-card").count()) === 8);
+  check("projects page shows 12 cards", (await page.locator(".project-card").count()) === 12);
 
   await page.goto(`${BASE}/work-with-me`, { waitUntil: "networkidle" });
   check("brief form present", (await page.locator(".brief-form").count()) === 1);
