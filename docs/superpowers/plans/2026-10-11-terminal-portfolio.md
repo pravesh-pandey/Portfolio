@@ -2,26 +2,27 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Turn the portfolio into a dark trading-terminal site with three audience paths, case studies, a CloudShell-style shell drawer and an order-flow playground, shipped in three phases.
+**Goal:** Turn the portfolio into a dark trading-terminal site with three audience paths, case studies with decision logs, a CloudShell-style shell drawer and a shareable order-flow playground, shipped in three phases.
 
-**Architecture:** The React 18 + Vite SPA keeps its structure: data modules → pages/sections → layout. New pure-JS modules (`src/data/caseStudies.js`, `src/data/links.js`, `src/shell/commands.js`, `src/shell/hotkey.js`, `src/sim/*`) hold all logic and are unit-tested with Node's built-in runner. UI components stay thin. The shell drawer and `/lab` page are code-split with `React.lazy`.
+**Architecture:** The React 18 + Vite SPA keeps its structure: data modules → pages/sections → layout. New pure-JS modules (`src/data/caseStudies.js`, `src/data/links.js`, `src/shell/commands.js`, `src/shell/hotkey.js`, `src/sim/*`) hold the logic and are unit-tested with Node's built-in runner. UI components stay thin. The shell drawer and `/lab` page are code-split with `React.lazy`, behind an error boundary.
 
 **Tech Stack:** React 18, React Router 6, Framer Motion 11, Vite 5, `node --test`, Playwright (`playwright-chromium`, existing dev dependency) for browser smoke checks.
 
-**Spec:** `docs/superpowers/specs/2026-10-11-terminal-portfolio-design.md`
+**Spec:** `docs/superpowers/specs/2026-10-11-terminal-portfolio-design.md`, including its "Revisions after review" section.
 
 ## Global Constraints
 
 - No new runtime or dev dependencies. The only dependency change is removing `@studio-freight/react-lenis`.
 - Fonts: JetBrains Mono (UI, headings, data, shell) and Inter (paragraphs), from Google Fonts with `display=swap`, replacing Fraunces and Manrope.
 - Dark only. Tokens: `--bg #0b0d0c`, `--pane #101513`, `--border #23302a`, `--text #d8e3dc`, `--text-2 #a9bcb2`, `--dim #6f8379`, `--amber #ffb000`, `--green #3ddc84`, `--red #ff6b5b`. Red is for alerts only; falling values use amber. All text pairs were checked for WCAG AA: dim on pane is 4.57:1, the lowest pair.
-- Trading copy has **no numbers**: no P&L, hit rates, Sharpe or latency. A unit test enforces this for trading case studies. Every claim must match the FlowPulse, ScriptBackTesting, TradingBot and LocalCache repos.
+- Trading copy has **no numbers**: no P&L, hit rates, Sharpe or latency. A unit test enforces this for trading case studies, including their decision logs. Every claim must match the FlowPulse, ScriptBackTesting, TradingBot and LocalCache repos. Pravesh confirmed the FlowPulse claims (short-horizon forecasting models, Telegram-feedback recalibration, C++20).
 - Unverifiable superlatives such as "institutional-grade", "profitable" or "used by traders" are not allowed.
-- Simulated data is always labelled `SIM` or "simulated".
-- Initial JS ≤ 113.5 kB gzip, measured from Vite's build output for `assets/index-*.js`. Today it is 113.49 kB. The shell drawer and `/lab` must be separate chunks.
+- Simulated data is always labelled `SIM` or "simulated". The lab must not show any accuracy or hit-rate counter, since that reads as a performance claim.
+- Initial JS ≤ 113.5 kB gzip, measured from Vite's build output for `assets/index-*.js`. Today it is 113.49 kB, so there's no headroom; measure after Tasks 3, 6 and 13. The shell drawer and `/lab` must be separate chunks.
 - `prefers-reduced-motion`: no motion; content appears immediately; the marquee does not scroll.
 - Every `localStorage` access is wrapped in try/catch, and the site must work identically without storage.
-- Mobile: 16px side gutter; no horizontal page scroll at 375px width.
+- Single-key shortcuts (`` ` `` and `1`–`5`) never fire while typing in a form field, and the `shortcuts off` command can turn them off (WCAG 2.1.4).
+- Mobile: 16px side gutter; no horizontal page scroll at 375px width; fixed bars respect `env(safe-area-inset-bottom)`.
 - Pure modules imported by unit tests (`src/data/*`, `src/shell/commands.js`, `src/shell/hotkey.js`, `src/sim/*`) use **relative imports only**, because `node --test` does not resolve the Vite aliases.
 - Never push, merge or open a PR without Pravesh's explicit go-ahead. Each phase ends with a stop for review.
 
@@ -40,9 +41,9 @@ CHROME_PATH=$(find ~/.cache/ms-playwright -type f -name chrome-headless-shell | 
 pkill -f "vite preview --port 4173"
 ```
 
-Expected: lint clean, every unit test passes, the build succeeds, and the verify script ends with `N/N checks passed`. (`npm test` exists from Task 1 on; before that, skip it.)
+Expected: lint clean, every unit test passes, the build succeeds, and the verify script's last line reads `N/N checks passed` with no `FAIL` lines. (`npm test` exists from Task 1 on; before that, skip it.) From Task 3 on, a missing element makes a check FAIL quickly instead of hanging, so a red run still prints every result.
 
-**Commit** (this machine has no global git identity):
+**Commit** (this machine has no global git identity). Use the attribution trailer the executing session is given; for this session it is:
 
 ```bash
 git add <files>
@@ -52,10 +53,10 @@ Claude-Session: https://claude.ai/code/session_011e2mAMXCkHJQGfChFBYrTo"
 
 ## Review Focus
 
-1. **Typing a backtick in a form field** (contact or brief form) must type a backtick, not open the shell. This is pinned by unit tests in Task 9 and a browser check in Task 10.
-2. **Blocked storage** (private mode, Safari with site data blocked): the shell must still open and close with no page errors. Browser check in Task 10.
-3. **Deep links and unknown slugs** (`/case-studies/does-not-exist`, or opening a case-study URL directly) must render the 404 page, not a blank screen. Browser check in Task 5.
-4. **Phones at 375px**: no page may scroll sideways. The ticker marquee, pipeline diagrams, project grid and order-book ladder are the risky parts. Browser check in Task 8, extended in Task 14.
+1. **Stale tab after a redeploy:** the shell or `/lab` chunk 404s. The page must show a "reload" prompt and keep working, never go blank. Browser checks in Tasks 10 and 14.
+2. **Typing a backtick or a digit in a form field** (contact or brief form) must type the character, not open the shell or change page. This is pinned by unit tests in Task 9 and a browser check in Task 10.
+3. **Blocked storage** (private mode, Safari with site data blocked): the shell still opens and closes, `shortcuts off` still works for the page view, and there are no page errors. Browser check in Task 10.
+4. **Phones at 375px**: no page scrolls sideways. The ticker marquee, pipeline diagrams, decision tables, project grid and order-book ladder are the risky parts. Browser check in Task 8, extended in Task 14.
 5. **Hidden browser tab**: the ticker and lab stop stepping, with no burst of catch-up steps on return. Browser check in Task 13.
 
 ---
@@ -73,13 +74,11 @@ Claude-Session: https://claude.ai/code/session_011e2mAMXCkHJQGfChFBYrTo"
 **Interfaces:**
 - Produces: `npm test`; every `projectShowcase` entry has `slug: string` (kebab-case, unique). Later tasks use these exact slugs: `flowpulse`, `options-backtester`, `localcache`, `market-depth-bot`, `ai-sudoku-solver`, `imme-conference-platform`, `tamperscripts`, `cell-phone-controlled-car`, `digital-marketing-website`, `covin`, `stockholm-paring`, `curves`.
 
-- [ ] **Step 1: Add the test script.** In `client/package.json` `"scripts"`, add after `"lint"`:
+- [ ] **Step 1: Add the test script.** In `client/package.json` `"scripts"`, add after `"lint"` (with a comma after the `"lint"` line):
 
 ```json
     "test": "node --test \"tests/**/*.test.js\""
 ```
-
-(Add a comma after the `"lint"` line.)
 
 - [ ] **Step 2: Write the failing test** `client/tests/profile.test.js`:
 
@@ -144,7 +143,7 @@ git add client/package.json client/tests/profile.test.js client/src/data/profile
 
 ---
 
-### Task 2: Case-study content
+### Task 2: Case-study content and decision logs
 
 **Files:**
 - Create: `client/src/data/caseStudies.js`
@@ -152,7 +151,7 @@ git add client/package.json client/tests/profile.test.js client/src/data/profile
 
 **Interfaces:**
 - Consumes: project slugs (Task 1).
-- Produces: `caseStudies: Array<{ slug, kind: "trading" | "infrastructure", title, summary, problem, pipeline: string[], approach: string[], highlights: string[], limitations: string[], stack: string[], codeLink: string | null }>` and `findCaseStudy(slug) → study | undefined`.
+- Produces: `caseStudies: Array<{ slug, kind: "trading" | "infrastructure", title, summary, problem, pipeline: string[], approach: string[], decisions: Array<{ decision, chosen, rejected }>, highlights: string[], limitations: string[], stack: string[], codeLink: string | null }>` and `findCaseStudy(slug) → study | undefined`.
 
 - [ ] **Step 1: Write the failing test** `client/tests/caseStudies.test.js`:
 
@@ -175,6 +174,10 @@ test("every case study matches a project and has all its sections", () => {
     assert.ok(study.highlights.length >= 3 && study.highlights.length <= 5, `${study.slug}.highlights`);
     assert.ok(study.limitations.length >= 1, `${study.slug}.limitations`);
     assert.ok(study.stack.length >= 1, `${study.slug}.stack`);
+    assert.ok(study.decisions.length >= 2 && study.decisions.length <= 4, `${study.slug}.decisions`);
+    for (const row of study.decisions) {
+      for (const key of ["decision", "chosen", "rejected"]) assert.ok(row[key].length > 0, `${study.slug} decision.${key}`);
+    }
   }
 });
 
@@ -186,7 +189,8 @@ test("trading case studies publish no numbers", () => {
       ...study.pipeline,
       ...study.approach,
       ...study.highlights,
-      ...study.limitations
+      ...study.limitations,
+      ...study.decisions.flatMap((row) => [row.decision, row.chosen, row.rejected])
     ]
       .join(" ")
       .replaceAll("C++20", "C++");
@@ -205,7 +209,7 @@ test("findCaseStudy returns the study or undefined", () => {
 Run: `cd client && npm test`
 Expected: FAIL with `Cannot find module '.../src/data/caseStudies.js'`.
 
-- [ ] **Step 3: Create** `client/src/data/caseStudies.js`. Every sentence below was checked against the repos' READMEs and code; for example, worst-case fills are in ScriptBackTesting's `backend/engine.py`, and the polling depth feed is in the FlowPulse README. Keep the wording when executing; Pravesh reviews it at the phase stop.
+- [ ] **Step 3: Create** `client/src/data/caseStudies.js`. Every sentence was checked against the repos' READMEs and code: worst-case fills, completed-bar signals and "no price is fabricated" are in ScriptBackTesting's `backend/engine.py`, and the polling depth feed is in the FlowPulse README. The decision-log rationales and the "Next:" lines are drafts for Pravesh to confirm at the Task 8 stop. Keep the wording when executing.
 
 ```js
 export const caseStudies = [
@@ -228,6 +232,23 @@ export const caseStudies = [
     approach: [
       "FlowPulse polls market depth for NIFTY, BANKNIFTY and FINNIFTY options and MCX contracts, tracks how the order book changes between snapshots, and computes market-microstructure signals on every update: order-flow imbalance, microprice and VPIN.",
       "A detector combines those signals to flag likely institutional activity. Each alert goes to Telegram with inline feedback buttons and opens a paper trade, so every signal is scored on what it would actually have earned after costs."
+    ],
+    decisions: [
+      {
+        decision: "Acting on signals",
+        chosen: "Paper-trade every alert with full F&O charges and lot sizes",
+        rejected: "Routing live orders from the start: a signal should prove itself after costs before it touches capital."
+      },
+      {
+        decision: "Detector thresholds",
+        chosen: "Recalibrate automatically from feedback on Telegram alerts",
+        rejected: "Fixed, hand-tuned thresholds: as market conditions change they drift into noise or silence."
+      },
+      {
+        decision: "Where results live",
+        chosen: "PostgreSQL for alerts, trades and market data, with Grafana dashboards",
+        rejected: "Log files: every review question becomes a scripting job instead of a query."
+      }
     ],
     highlights: [
       "Modern C++20 core built with CMake, with candle building and indicators (EMA, RSI, volatility) on top of the raw feed.",
@@ -264,6 +285,28 @@ export const caseStudies = [
       "The engine is deterministic: strategies only ever see completed underlying bars, missing prices are never forward-filled, and each leg is matched to a real contract by strike step and budget before an order is simulated with full charges.",
       "On top of the engine, a parallel sweep explores strategies, parameters, strike offsets and risk settings, while walk-forward research with Fixed Share weights and purged chronological validation checks whether an edge survives on data it was not tuned on."
     ],
+    decisions: [
+      {
+        decision: "Fill prices",
+        chosen: "Worst case: buys fill at the candle high, sells at the low, plus slippage",
+        rejected: "Candle close or mid-price: optimistic fills are the most common way backtests flatter a strategy."
+      },
+      {
+        decision: "What a strategy can see",
+        chosen: "Only completed underlying bars; entries execute at the next minute's open",
+        rejected: "Signals on the bar still forming: that is look-ahead bias, and it inflates every result."
+      },
+      {
+        decision: "Missing prices",
+        chosen: "Never forward-fill; a position whose strike leaves the archive settles at its last observed price",
+        rejected: "Forward-filling gaps: invented prices create trades that could never have happened."
+      },
+      {
+        decision: "Validation",
+        chosen: "Walk-forward research with purged chronological splits",
+        rejected: "One backtest tuned and scored on the same data: it reports luck as skill."
+      }
+    ],
     highlights: [
       "Look-ahead-safe simulation: session-anchored resampling and completed-bar signals only.",
       "Conservative worst-case fills: market buys fill at the candle high, sells at the low, plus configurable slippage.",
@@ -299,6 +342,28 @@ export const caseStudies = [
       "Every key is hashed with SHA-256 and mapped to a sharded directory path, so the cost of a lookup does not depend on how many entries exist. Writes go to a temporary file and are renamed into place, with optional fsync, so a crash never leaves a half-written entry.",
       "Concurrent access is coordinated with POSIX file locks. Expiry metadata sits next to each payload and is checked lazily on read, and an append-only access journal drives background eviction without keeping usage statistics in memory."
     ],
+    decisions: [
+      {
+        decision: "Finding a key",
+        chosen: "SHA-256 hash mapped to a sharded directory path",
+        rejected: "An in-memory index: it caps the cache at what fits in RAM and must be rebuilt on every start."
+      },
+      {
+        decision: "Crash safety",
+        chosen: "Write to a temporary file, then rename it into place atomically (optional fsync)",
+        rejected: "Writing in place: a crash mid-write leaves a corrupt entry behind."
+      },
+      {
+        decision: "Concurrency",
+        chosen: "POSIX file locks",
+        rejected: "In-process locks only: two services sharing one cache directory would race."
+      },
+      {
+        decision: "Eviction bookkeeping",
+        chosen: "An append-only access journal",
+        rejected: "An in-memory LRU list: memory use would grow with the number of entries."
+      }
+    ],
     highlights: [
       "Constant-time lookups via hash-addressed, sharded storage.",
       "Crash-safe atomic writes with optional durability (fsync).",
@@ -328,7 +393,7 @@ Expected: `ℹ pass 4`, `ℹ fail 0`.
 
 ```bash
 git add client/src/data/caseStudies.js client/tests/caseStudies.test.js
-# commit subject: "Add case-study content for FlowPulse, Options Backtester and LocalCache"
+# commit subject: "Add case studies with decision logs for FlowPulse, Options Backtester and LocalCache"
 ```
 
 ---
@@ -336,26 +401,32 @@ git add client/src/data/caseStudies.js client/tests/caseStudies.test.js
 ### Task 3: Terminal theme foundation
 
 **Files:**
-- Modify: `client/index.html` (fonts, title, description)
+- Modify: `client/index.html` (viewport, fonts, title, description, Open Graph)
 - Rewrite: `client/src/styles/global.css`
 - Modify: `client/src/App.jsx`, `client/src/layout/AppLayout.jsx`
 - Delete: `client/src/components/common/Cursor.jsx`, `client/src/components/common/Cursor.css`, `client/src/components/common/ScrollProgress.jsx`, `client/src/components/background/AmbientBackground.jsx`, `client/src/components/background/ambientBackground.css`
 - Modify: `client/src/components/achievements/achievementGrid.css`, `client/src/components/forms/projectBriefForm.css`, `client/src/components/sections/contactSection.css`, `client/src/components/projects/projectGrid.css`
 - Modify: `client/package.json`, `client/package-lock.json` (remove Lenis)
-- Modify: `client/scripts/verify-redesign.mjs` (honor `CHROME_PATH`)
+- Modify: `client/scripts/verify-redesign.mjs` (installed Chromium, non-hanging helpers)
 
 **Interfaces:**
-- Produces: CSS tokens `--bg --pane --pane-2 --border --text --text-2 --dim --amber --green --red --font-mono --font-sans --radius --max-width --header-height --status-bar-height`; classes `.pane`, `.pane__label`, `.chip`, `.chips`, `.button`, `.button--primary`. Legacy names (`--accent`, `--accent-2`, `--accent-3`, `--surface*`, `--card`, `--text-dim`, `--font-body`, `--font-display`, `--corner-*`, `--shadow-*`) remain as aliases so untouched component CSS keeps working.
+- Produces:
+  - CSS tokens `--bg --pane --pane-2 --border --text --text-2 --dim --amber --green --red --font-mono --font-sans --radius --max-width --header-height --status-bar-height`. `--shell-height` is optional (set in Task 10) and is read by `body`'s padding.
+  - Classes `.pane`, `.pane__label`, `.chip`, `.chips`, `.button`, `.button--primary`.
+  - Legacy names (`--accent`, `--accent-2`, `--accent-3`, `--surface*`, `--card`, `--text-dim`, `--font-body`, `--font-display`, `--corner-*`, `--shadow-*`) remain as aliases, so untouched component CSS keeps working.
+  - Verify-script helpers `text(target, selector) → Promise<string>` (returns `""` when the element is missing) and `attempt(promise) → Promise<boolean>`. Every later check uses them.
 
 This task is a visual change, so its test is the existing smoke script plus a screenshot check.
 
-- [ ] **Step 1: Let the verify script use an installed Chromium.** In `client/scripts/verify-redesign.mjs`, replace:
+- [ ] **Step 1: Make the verify script robust.** In `client/scripts/verify-redesign.mjs`:
+
+(a) Replace
 
 ```js
   const browser = await chromium.launch();
 ```
 
-with:
+with
 
 ```js
   const browser = await chromium.launch(
@@ -363,7 +434,33 @@ with:
   );
 ```
 
-- [ ] **Step 2: Fonts and metadata.** In `client/index.html`, replace the Google Fonts `<link href=...>` with:
+(b) Directly after the `check` helper (the `const check = ...;` block), insert:
+
+```js
+
+// Missing elements count as empty or failed instead of hanging, so a red run still prints every FAIL.
+const text = async (target, selector) =>
+  (await target.locator(selector).count()) > 0 ? ((await target.locator(selector).first().textContent()) ?? "") : "";
+const attempt = (promise) => promise.then(
+  () => true,
+  () => false
+);
+```
+
+(c) After `const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });` add `page.setDefaultTimeout(5000);`. After the `const mobile = await browser.newPage({ ... });` statement add `mobile.setDefaultTimeout(5000);`.
+
+- [ ] **Step 2: Viewport, fonts and metadata.** In `client/index.html`:
+
+Replace the viewport meta with:
+
+```html
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"
+    />
+```
+
+Replace the Google Fonts `<link href=...>` with:
 
 ```html
     <link
@@ -373,6 +470,17 @@ with:
 ```
 
 Replace the description `content` with `Pravesh Pandey, Software Development Engineer at Amazon Alexa AI. Backend systems at Amazon scale and trading systems at market speed: case studies, projects and ways to work together.`, and the `<title>` with `Pravesh Pandey — Backend & Trading Systems Engineer`.
+
+Directly after the description meta, add the site-wide link-preview tags. LinkedIn and Upwork read these; their crawlers don't run JavaScript, so per-page tags wouldn't be seen.
+
+```html
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Pravesh Pandey — Backend & Trading Systems Engineer" />
+    <meta
+      property="og:description"
+      content="Backend systems at Amazon scale. Trading systems at market speed. Case studies, projects and ways to work together."
+    />
+```
 
 - [ ] **Step 3: Rewrite** `client/src/styles/global.css` completely:
 
@@ -436,7 +544,8 @@ body {
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  padding-bottom: var(--status-bar-height);
+  /* Room for the fixed status bar, the open shell drawer (--shell-height, set in shell.css) and the iPhone home indicator. */
+  padding-bottom: calc(var(--status-bar-height) + var(--shell-height, 0px) + env(safe-area-inset-bottom));
 }
 
 ::selection {
@@ -779,9 +888,9 @@ Replace `color: #b42318;` in `.contact-status--error` with `color: var(--red);`.
 `client/src/components/projects/projectGrid.css`: replace `box-shadow: 0 24px 50px rgba(67, 52, 36, 0.2);` with `box-shadow: none;`.
 
 - [ ] **Step 6: Run the verify procedure.**
-Expected: lint and unit tests pass; the build succeeds with no `@studio-freight/react-lenis` import errors; `23/23 checks passed`. The header is still light; Task 4 restyles it.
+Expected: lint and unit tests pass; the build succeeds with no `@studio-freight/react-lenis` import errors; `23/23 checks passed`. The header is still light; Task 4 restyles it. Note the `index-*.js` gzip size; it should drop below 113.49 kB now that Lenis is gone.
 
-- [ ] **Step 7: Look at it.** Open `/tmp/portfolio-desktop.png`, written by the verify script. Body text should be Inter on near-black, headings JetBrains Mono, and panels dark with thin borders. Check for any light-colored panel left over, then `grep -rn -E "rgba\((248|255, 255, 255|67, 52|43, 36|31, 27|28, 26)" client/src --include="*.css"`. Expected: matches only in `siteHeader.css`, which Task 4 rewrites.
+- [ ] **Step 7: Look at it.** Open `/tmp/portfolio-desktop.png`, written by the verify script. Body text should be Inter on near-black, headings JetBrains Mono, and panels dark with thin borders. Then run `grep -rn -E "rgba\((248|255, 255, 255|67, 52|43, 36|31, 27|28, 26)" client/src --include="*.css"`. Expected: matches only in `siteHeader.css`, which Task 4 rewrites.
 
 - [ ] **Step 8: Commit.**
 
@@ -797,7 +906,7 @@ git add -A client/index.html client/src client/package.json client/package-lock.
 **Files:**
 - Create: `client/src/data/links.js`
 - Modify: `client/src/data/navigation.js`
-- Modify: `client/src/components/navigation/SiteHeader.jsx`; rewrite `client/src/components/navigation/siteHeader.css`
+- Rewrite: `client/src/components/navigation/SiteHeader.jsx`, `client/src/components/navigation/siteHeader.css`
 - Create: `client/src/components/navigation/StatusBar.jsx`, `client/src/components/navigation/statusBar.css`
 - Modify: `client/src/components/navigation/SiteFooter.jsx`, `client/src/components/navigation/siteFooter.css`
 - Modify: `client/src/components/sections/ContactSection.jsx`, `client/src/pages/WorkWithMePage.jsx`
@@ -805,25 +914,37 @@ git add -A client/index.html client/src client/package.json client/package-lock.
 - Modify: `client/scripts/verify-redesign.mjs`
 
 **Interfaces:**
-- Produces: `links.js` exports `EMAIL`, `UPWORK_URL` and `socialLinks: Array<{label, href}>` (used by the shell in Task 9). `NAV_ITEMS: Array<{ path, key, label }>`. `<StatusBar>{leftSlot}</StatusBar>`, where children render on the left and the copyright on the right (Task 10 passes the shell button as children).
+- Produces:
+  - `links.js` exports `EMAIL`, `UPWORK_URL` and `socialLinks: Array<{label, href}>`; the shell uses them in Task 9.
+  - `NAV_ITEMS: Array<{ path, key, label }>`.
+  - `SiteHeader` defines a `goTo(path)` closure that handles both routes and `#section` paths; Task 10 reuses it for the number keys.
+  - `<StatusBar>{leftSlot}</StatusBar>`: children render on the left and the copyright on the right. Task 10 passes the shell button as children.
 
 - [ ] **Step 1: Write the failing browser checks.** In `client/scripts/verify-redesign.mjs`, directly after the `check("social links are real", ...)` line, insert:
 
 ```js
-  check("nav has four numbered items", (await page.locator(".site-nav__link").count()) === 4);
-  check(
-    "nav labels are terminal-style",
-    ((await page.locator(".site-nav__link").first().textContent()) ?? "").includes("[1]")
-  );
-  check(
-    "status bar shows copyright",
-    ((await page.locator(".status-bar").textContent()) ?? "").includes("Pravesh Pandey")
-  );
+  check("nav has four numbered items", (await page.locator(".site-nav__key").count()) === 4);
+  check("nav labels are terminal-style", (await text(page, ".site-nav__link")).includes("[1]"));
+  check("status bar shows copyright", (await text(page, ".status-bar")).includes("Pravesh Pandey"));
   check("footer links Upwork", (await page.locator('.site-footer a[href*="upwork.com"]').count()) === 1);
+  await page.mouse.wheel(0, 1500);
+  await page.waitForTimeout(500);
+  check(
+    "header stays on screen while scrolling",
+    await page.evaluate(() => document.querySelector(".site-header")?.getBoundingClientRect().top === 0)
+  );
+```
+
+In the mobile pass, directly after the `check("reduced-motion counters show final value", ...)` line, insert:
+
+```js
+  await attempt(mobile.click(".site-header__toggle"));
+  check("mobile menu offers the PDF", await mobile.locator('.site-nav__pdf a[href$="resume.pdf"]').isVisible());
+  await attempt(mobile.click(".site-header__scrim"));
 ```
 
 - [ ] **Step 2: Run the verify procedure to see them fail.**
-Expected: `FAIL nav has four numbered items` (7 links today), `FAIL nav labels are terminal-style`, `FAIL status bar shows copyright`. The footer Upwork check already passes; the link was added earlier on this branch.
+Expected: the nav, status-bar, header-scroll and mobile-PDF checks FAIL. The footer Upwork check already passes; the link was added earlier on this branch.
 
 - [ ] **Step 3: Create** `client/src/data/links.js`:
 
@@ -845,49 +966,105 @@ export const socialLinks = [
 export const NAV_ITEMS = [
   { path: "/work-with-me", key: "1", label: "hire" },
   { path: "/trading", key: "2", label: "trading" },
-  { path: "#experience", key: "3", label: "resume" },
+  { path: "#experience", key: "3", label: "experience" },
   { path: "/projects", key: "4", label: "projects" }
 ];
 ```
 
-(`#experience` paths reuse `handleNavClick`'s existing hash handling.)
-
-- [ ] **Step 5: Update** `client/src/components/navigation/SiteHeader.jsx`:
-
-Change the logo text `<span className="logo-text">PP</span>` to `<span className="logo-text">PP_</span>`.
-
-Replace the nav link JSX:
+- [ ] **Step 5: Rewrite** `client/src/components/navigation/SiteHeader.jsx`:
+- The header no longer hides on scroll. That drops `useScroll` and `useMotionValueEvent`, and with them the scroll-linked framer-motion code it needed.
+- The CV button reads `cv.pdf`.
+- The mobile menu gains a `cv.pdf` item, since the header button is hidden on very small screens.
 
 ```jsx
-                  <a
-                    href={item.path}
-                    onClick={(e) => handleNavClick(e, item.path)}
-                    className={cls("site-nav__link")}
-                  >
-                    {item.label}
-                  </a>
-```
+import { useState } from "react";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { useReducedMotion } from "framer-motion";
+import { NAV_ITEMS } from "@data/navigation.js";
+import "./siteHeader.css";
 
-with:
+const cls = (...classes) => classes.filter(Boolean).join(" ");
 
-```jsx
-                  <a
-                    href={item.path}
-                    onClick={(e) => handleNavClick(e, item.path)}
-                    className="site-nav__link"
-                    aria-current={location.pathname === item.path ? "page" : undefined}
-                  >
-                    <span className="site-nav__key">[{item.key}]</span> {item.label}
-                  </a>
-```
+// A terminal keeps its chrome on screen, so the header no longer hides on scroll.
+export const SiteHeader = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const reduceMotion = useReducedMotion();
+  const resumeHref = `${import.meta.env.BASE_URL}resume.pdf`;
+  const closeMenu = () => setIsOpen(false);
 
-Replace the toggle button's three `<span>` children with:
+  // Paths starting with "#" are home-page sections; everything else is a route.
+  const goTo = (path) => {
+    closeMenu();
+    if (!path.startsWith("#")) {
+      navigate(path);
+    } else if (location.pathname !== "/") {
+      navigate(`/${path}`);
+    } else if (location.hash === path) {
+      // Same hash: navigation would be a no-op, so scroll directly.
+      document.getElementById(path.slice(1))?.scrollIntoView({ behavior: reduceMotion ? "instant" : "smooth" });
+    } else {
+      // Keep the URL hash in sync; useHashScroll performs the scroll.
+      navigate(path);
+    }
+  };
 
-```jsx
+  return (
+    <header className="site-header">
+      <div className="site-header__container">
+        <NavLink to="/" className="site-header__logo" onClick={closeMenu}>
+          PP_
+        </NavLink>
+
+        <nav className={cls("site-nav", isOpen && "site-nav--open")} aria-label="Primary">
+          <ul className="site-nav__list">
+            {NAV_ITEMS.map((item) => (
+              <li key={item.path}>
+                <a
+                  href={item.path}
+                  className="site-nav__link"
+                  aria-current={location.pathname === item.path ? "page" : undefined}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    goTo(item.path);
+                  }}
+                >
+                  <span className="site-nav__key">[{item.key}]</span> {item.label}
+                </a>
+              </li>
+            ))}
+            <li className="site-nav__pdf">
+              <a href={resumeHref} className="site-nav__link" target="_blank" rel="noreferrer">
+                cv.pdf
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <div className="site-header__actions">
+          <a className="button button--ghost" href={resumeHref} target="_blank" rel="noreferrer">
+            cv.pdf
+          </a>
+          <button
+            className="site-header__toggle"
+            type="button"
+            aria-expanded={isOpen}
+            onClick={() => setIsOpen((open) => !open)}
+          >
             <span aria-hidden="true">[≡]</span> menu
+          </button>
+        </div>
+      </div>
+      <div
+        className={cls("site-header__scrim", isOpen && "site-header__scrim--visible")}
+        aria-hidden="true"
+        onClick={closeMenu}
+      />
+    </header>
+  );
+};
 ```
-
-Keep `aria-expanded` and `onClick`; drop the `sr-only` "Toggle navigation" span, since the visible text "menu" now names the button.
 
 - [ ] **Step 6: Rewrite** `client/src/components/navigation/siteHeader.css`:
 
@@ -948,6 +1125,10 @@ Keep `aria-expanded` and `onClick`; drop the `sr-only` "Toggle navigation" span,
   color: var(--green);
 }
 
+.site-nav__pdf {
+  display: none;
+}
+
 .site-header__actions {
   display: flex;
   align-items: center;
@@ -998,6 +1179,11 @@ Keep `aria-expanded` and `onClick`; drop the `sr-only` "Toggle navigation" span,
 
   .site-nav__link {
     font-size: 1rem;
+  }
+
+  .site-nav__pdf {
+    display: list-item;
+    list-style: none;
   }
 
   .site-header__toggle {
@@ -1051,12 +1237,12 @@ and `client/src/components/navigation/statusBar.css`:
   right: 0;
   bottom: 0;
   z-index: 60;
-  height: var(--status-bar-height);
+  height: calc(var(--status-bar-height) + env(safe-area-inset-bottom));
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0 1rem;
+  padding: 0 1rem env(safe-area-inset-bottom);
   background: var(--pane-2);
   border-top: 1px solid var(--border);
   font-family: var(--font-mono);
@@ -1106,7 +1292,7 @@ In `client/src/components/navigation/siteFooter.css`, delete the `backdrop-filte
 - [ ] **Step 9: Use the shared links.** In `client/src/components/sections/ContactSection.jsx`:
 - Delete the local `socialLinks` array.
 - Add `import { EMAIL, socialLinks } from "@data/links.js";`.
-- Replace the three hard-coded `pravesh.pandey.mnnit@gmail.com` occurrences (two `href`s and two link texts) with `` `mailto:${EMAIL}` `` and `{EMAIL}`.
+- Replace each hard-coded `pravesh.pandey.mnnit@gmail.com`: use `` `mailto:${EMAIL}` `` in the two `href`s and `{EMAIL}` in the two link texts.
 
 In `client/src/pages/WorkWithMePage.jsx`:
 - Add `import { EMAIL, UPWORK_URL } from "@data/links.js";`.
@@ -1116,7 +1302,7 @@ In `client/src/pages/WorkWithMePage.jsx`:
 - [ ] **Step 10: Mount the status bar.** In `client/src/layout/AppLayout.jsx`, add `import { StatusBar } from "@components/navigation/StatusBar.jsx";` and render `<StatusBar />` immediately after the closing `</div>` of `.site` (inside the fragment).
 
 - [ ] **Step 11: Run the verify procedure.**
-Expected: all checks pass, including the four new ones (27/27).
+Expected: every check passes, including the new ones.
 
 - [ ] **Step 12: Commit.**
 
@@ -1126,46 +1312,72 @@ git add client/src client/scripts/verify-redesign.mjs
 ```
 
 ---
-
-### Task 5: Case-study pages and /trading
+### Task 5: Case-study pages, decision logs and /trading
 
 **Files:**
+- Create: `client/src/hooks/useDocumentTitle.js`
 - Create: `client/src/components/caseStudies/CaseStudyPane.jsx`, `Pipeline.jsx`, `HireCta.jsx`, `caseStudies.css`
 - Create: `client/src/pages/CaseStudyPage.jsx`, `client/src/pages/TradingPage.jsx`
 - Modify: `client/src/router.jsx`
 - Modify: `client/scripts/verify-redesign.mjs`
 
 **Interfaces:**
-- Consumes: `caseStudies`, `findCaseStudy` (Task 2); `EMAIL` (Task 4).
-- Produces: `<CaseStudyPane study={study} />` (class `case-pane case-pane--study`), `<Pipeline stages={string[]} />`, `<HireCta topic={string} />` (class `hire-cta`), `.case-grid` layout class; routes `/trading`, `/case-studies/:slug`.
+- Consumes: `caseStudies`, `findCaseStudy` (Task 2); `EMAIL` (Task 4); verify helpers (Task 3).
+- Produces:
+  - `useDocumentTitle(title: string)`.
+  - `<CaseStudyPane study={study} />` (class `case-pane case-pane--study`).
+  - `<Pipeline stages={string[]} />`.
+  - `<HireCta topic={string} />` (class `hire-cta`).
+  - The `.case-grid` layout class.
+  - Routes `/trading` and `/case-studies/:slug`.
 
 - [ ] **Step 1: Write the failing browser checks.** In `client/scripts/verify-redesign.mjs`, insert directly before `await page.goto(\`${BASE}/projects\`, ...)`:
 
 ```js
   await page.goto(`${BASE}/trading`, { waitUntil: "networkidle" });
   check("trading page lists two case studies", (await page.locator(".case-pane--study").count()) === 2);
+  check("trading page explains what isn't published", (await page.locator(".not-published li").count()) === 3);
   check("trading page ends with a hire CTA", (await page.locator(".hire-cta").count()) === 1);
   for (const slug of ["flowpulse", "options-backtester", "localcache"]) {
     await page.goto(`${BASE}/case-studies/${slug}`, { waitUntil: "networkidle" });
     check(
       `case study ${slug} renders`,
-      (await page.locator(".pipeline__stage").count()) >= 3 && (await page.locator(".hire-cta").count()) === 1
+      (await page.locator(".pipeline__stage").count()) >= 3 &&
+        (await page.locator(".decision-table tbody tr").count()) >= 2 &&
+        (await page.locator(".hire-cta").count()) === 1
     );
   }
+  check("case study sets the tab title", (await page.title()).startsWith("LocalCache · "));
   await page.goto(`${BASE}/case-studies/does-not-exist`, { waitUntil: "networkidle" });
-  check("unknown case study shows 404", ((await page.locator("h1").first().textContent()) ?? "").includes("404"));
+  check("unknown case study shows 404", (await text(page, "h1")).includes("404"));
   await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
-  await page.click('.site-nav__link:has-text("trading")');
-  await page
-    .waitForFunction(() => window.location.pathname.endsWith("/trading"), null, { timeout: 5000 })
-    .catch(() => {});
+  await attempt(page.click('.site-nav__link:has-text("trading")'));
+  await attempt(page.waitForURL("**/trading"));
   check("nav [2] trading opens /trading", page.url().endsWith("/trading"));
 ```
 
 - [ ] **Step 2: Run the verify procedure to see them fail.**
-Expected: the trading-page and case-study checks FAIL, because those routes render the 404 page. `unknown case study shows 404` and `nav [2] trading opens /trading` already pass; the latter only checks the URL.
+Expected: the trading-page, case-study and tab-title checks FAIL, because those routes render the 404 page. `unknown case study shows 404` and `nav [2] trading opens /trading` already pass; the latter only checks the URL.
 
-- [ ] **Step 3: Create** `client/src/components/caseStudies/Pipeline.jsx`:
+- [ ] **Step 3: Create** `client/src/hooks/useDocumentTitle.js`:
+
+```js
+import { useEffect } from "react";
+
+// Sets the tab title to "<title> · Pravesh Pandey" while the page is mounted, then restores it.
+// (Link previews on LinkedIn/Upwork read index.html's static tags; crawlers there don't run JS.)
+export const useDocumentTitle = (title) => {
+  useEffect(() => {
+    const previous = document.title;
+    document.title = `${title} · Pravesh Pandey`;
+    return () => {
+      document.title = previous;
+    };
+  }, [title]);
+};
+```
+
+- [ ] **Step 4: Create** `client/src/components/caseStudies/Pipeline.jsx`:
 
 ```jsx
 export const Pipeline = ({ stages }) => (
@@ -1179,7 +1391,7 @@ export const Pipeline = ({ stages }) => (
 );
 ```
 
-- [ ] **Step 4: Create** `client/src/components/caseStudies/CaseStudyPane.jsx`:
+- [ ] **Step 5: Create** `client/src/components/caseStudies/CaseStudyPane.jsx`:
 
 ```jsx
 import { Link } from "react-router-dom";
@@ -1203,7 +1415,7 @@ export const CaseStudyPane = ({ study }) => (
 );
 ```
 
-- [ ] **Step 5: Create** `client/src/components/caseStudies/HireCta.jsx`. The walkthrough link opens an email with the topic in the subject, rather than repeating the hire link:
+- [ ] **Step 6: Create** `client/src/components/caseStudies/HireCta.jsx`. The walkthrough link opens an email with the topic in the subject:
 
 ```jsx
 import { Link } from "react-router-dom";
@@ -1225,7 +1437,7 @@ export const HireCta = ({ topic }) => (
 );
 ```
 
-- [ ] **Step 6: Create** `client/src/components/caseStudies/caseStudies.css`:
+- [ ] **Step 7: Create** `client/src/components/caseStudies/caseStudies.css`. On phones, the decision table stacks each row into labelled lines, so it never scrolls sideways.
 
 ```css
 .case-grid {
@@ -1317,6 +1529,54 @@ export const HireCta = ({ topic }) => (
   overflow-wrap: anywhere;
 }
 
+.decision-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.decision-table th,
+.decision-table td {
+  padding: 0.55rem 0.6rem;
+  border-top: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+  color: var(--text-2);
+}
+
+.decision-table thead th {
+  border-top: none;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.decision-table tbody th {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  color: var(--text);
+}
+
+.decision-table td:nth-child(2) {
+  color: var(--green);
+}
+
+.not-published {
+  margin-top: 1rem;
+}
+
+.not-published ul {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.not-published p:last-child {
+  margin: 1rem 0 0;
+}
+
 .hire-cta__title {
   margin: 0 0 1rem;
   font-family: var(--font-mono);
@@ -1335,6 +1595,32 @@ export const HireCta = ({ topic }) => (
 }
 
 @media (max-width: 640px) {
+  .decision-table thead {
+    display: none;
+  }
+
+  .decision-table tr,
+  .decision-table th,
+  .decision-table td {
+    display: block;
+  }
+
+  .decision-table tbody th {
+    padding-top: 0.8rem;
+  }
+
+  .decision-table td {
+    border-top: none;
+    padding-top: 0.2rem;
+  }
+
+  .decision-table td::before {
+    content: attr(data-label) ": ";
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--dim);
+  }
+
   .pipeline {
     flex-direction: column;
     align-items: flex-start;
@@ -1352,7 +1638,7 @@ export const HireCta = ({ topic }) => (
 }
 ```
 
-- [ ] **Step 7: Create** `client/src/pages/CaseStudyPage.jsx`:
+- [ ] **Step 8: Create** `client/src/pages/CaseStudyPage.jsx`. Hooks run before the early return, as React requires.
 
 ```jsx
 import { useParams } from "react-router-dom";
@@ -1360,6 +1646,7 @@ import { PageIntro } from "@components/common/PageIntro.jsx";
 import { Pipeline } from "@components/caseStudies/Pipeline.jsx";
 import { HireCta } from "@components/caseStudies/HireCta.jsx";
 import { findCaseStudy } from "@data/caseStudies.js";
+import { useDocumentTitle } from "@hooks/useDocumentTitle.js";
 import { NotFoundPage } from "./NotFoundPage.jsx";
 import "@components/caseStudies/caseStudies.css";
 
@@ -1368,6 +1655,7 @@ const KIND_LABEL = { trading: "Trading systems", infrastructure: "Infrastructure
 export const CaseStudyPage = () => {
   const { slug } = useParams();
   const study = findCaseStudy(slug);
+  useDocumentTitle(study ? study.title : "Not found");
   if (!study) return <NotFoundPage />;
 
   return (
@@ -1384,6 +1672,27 @@ export const CaseStudyPage = () => {
           {study.approach.map((paragraph) => (
             <p key={paragraph}>{paragraph}</p>
           ))}
+        </section>
+        <section className="pane">
+          <h2 className="pane__label">Decision log</h2>
+          <table className="decision-table">
+            <thead>
+              <tr>
+                <th scope="col">Decision</th>
+                <th scope="col">Chosen</th>
+                <th scope="col">Rejected, and why</th>
+              </tr>
+            </thead>
+            <tbody>
+              {study.decisions.map((row) => (
+                <tr key={row.decision}>
+                  <th scope="row">{row.decision}</th>
+                  <td data-label="Chosen">{row.chosen}</td>
+                  <td data-label="Rejected">{row.rejected}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </section>
         <section className="pane">
           <h2 className="pane__label">Engineering highlights</h2>
@@ -1427,35 +1736,54 @@ export const CaseStudyPage = () => {
 };
 ```
 
-- [ ] **Step 8: Create** `client/src/pages/TradingPage.jsx`:
+- [ ] **Step 9: Create** `client/src/pages/TradingPage.jsx`, including the "What I don't publish, and why" pane:
 
 ```jsx
 import { PageIntro } from "@components/common/PageIntro.jsx";
 import { CaseStudyPane } from "@components/caseStudies/CaseStudyPane.jsx";
 import { HireCta } from "@components/caseStudies/HireCta.jsx";
 import { caseStudies } from "@data/caseStudies.js";
+import { useDocumentTitle } from "@hooks/useDocumentTitle.js";
 import "@components/caseStudies/caseStudies.css";
 
-export const TradingPage = () => (
-  <div className="page trading-page">
-    <PageIntro
-      eyebrow="Trading systems"
-      title="Market software, engineered like production systems."
-      lead="Order-flow detection and options research for Indian markets, built with the same rigor as large-scale backend services. Methods only: no performance figures are published here."
-    />
-    <div className="case-grid">
-      {caseStudies
-        .filter((study) => study.kind === "trading")
-        .map((study) => (
-          <CaseStudyPane key={study.slug} study={study} />
-        ))}
+export const TradingPage = () => {
+  useDocumentTitle("Trading systems");
+
+  return (
+    <div className="page trading-page">
+      <PageIntro
+        eyebrow="Trading systems"
+        title="Market software, engineered like production systems."
+        lead="Order-flow detection and options research for Indian markets, built with the same rigor as large-scale backend services."
+      />
+      <div className="case-grid">
+        {caseStudies
+          .filter((study) => study.kind === "trading")
+          .map((study) => (
+            <CaseStudyPane key={study.slug} study={study} />
+          ))}
+      </div>
+      <section className="pane not-published" aria-labelledby="not-published-title">
+        <h2 className="pane__label" id="not-published-title">
+          {"What I don't publish, and why"}
+        </h2>
+        <ul>
+          <li>
+            No P&amp;L, win rates or Sharpe ratios. Backtest figures are easy to overfit and impossible to verify from a
+            web page, so a number here would prove nothing.
+          </li>
+          <li>No live-trading claims. FlowPulse paper-trades its signals; nothing here routes real capital.</li>
+          <li>No strategy parameters. The engineering is open to discuss; the edge stays private.</li>
+        </ul>
+        <p>Want to judge the rigor yourself? Ask for a walkthrough of the code and the method.</p>
+      </section>
+      <HireCta topic="trading systems" />
     </div>
-    <HireCta topic="trading systems" />
-  </div>
-);
+  );
+};
 ```
 
-- [ ] **Step 9: Add routes.** In `client/src/router.jsx`, add the imports:
+- [ ] **Step 10: Add routes.** In `client/src/router.jsx`, add the imports:
 
 ```jsx
 import { TradingPage } from "@pages/TradingPage.jsx";
@@ -1469,14 +1797,14 @@ and, after the `/projects` route:
     <Route path="/case-studies/:slug" element={<CaseStudyPage />} />
 ```
 
-- [ ] **Step 10: Run the verify procedure.**
-Expected: all checks pass (34/34).
+- [ ] **Step 11: Run the verify procedure.**
+Expected: every check passes.
 
-- [ ] **Step 11: Commit.**
+- [ ] **Step 12: Commit.**
 
 ```bash
 git add client/src client/scripts/verify-redesign.mjs
-# commit subject: "Add case-study pages and the trading systems page"
+# commit subject: "Add case-study pages with decision logs and the trading systems page"
 ```
 
 ---
@@ -1487,17 +1815,25 @@ git add client/src client/scripts/verify-redesign.mjs
 - Rewrite: `client/src/components/sections/HeroSection.jsx`, `client/src/components/sections/heroSection.css`
 - Create: `client/src/hooks/useTypewriter.js`
 - Create: `client/src/components/sections/TradingTeaserSection.jsx`
-- Modify: `client/src/pages/HomePage.jsx`
+- Modify: `client/src/pages/HomePage.jsx`, `client/src/pages/homePage.css`
 - Rewrite: `client/src/components/sections/ImpactSection.jsx`, `client/src/components/sections/impactSection.css`
 - Modify: `client/src/components/common/SectionHeading.jsx`
-- Modify: section numbers in `AboutSection.jsx`, `ExperienceSection.jsx`, `FeaturedProjectsSection.jsx`, `SkillsSection.jsx`, `AwardsSection.jsx`, `ContactSection.jsx`; About copy
+- Modify: section numbers in `AboutSection.jsx`, `ExperienceSection.jsx`, `FeaturedProjectsSection.jsx`, `SkillsSection.jsx`, `AwardsSection.jsx`, `ContactSection.jsx`; About copy; CV link in `ExperienceSection.jsx`
 - Modify: `client/scripts/verify-redesign.mjs`
 
 **Interfaces:**
 - Consumes: `CaseStudyPane`, `.case-grid` (Task 5).
 - Produces: `useTypewriter(text: string, msPerChar: number) → string`; home section `#trading`; hero classes `.hero__title`, `.hero__path`, `.hero__tag`.
 
-- [ ] **Step 1: Update the browser checks.** In `client/scripts/verify-redesign.mjs`, replace:
+- [ ] **Step 1: Update the browser checks.** In `client/scripts/verify-redesign.mjs`:
+
+Below the `BASE` constant, add:
+
+```js
+const TAGLINE = "> pravesh pandey · sde @ amazon alexa ai · quant dev";
+```
+
+Replace:
 
 ```js
   check("hero renders", (await page.locator(".hero-scene__title").count()) === 1);
@@ -1508,6 +1844,10 @@ with:
 ```js
   check("hero renders", (await page.locator(".hero__title").count()) === 1);
   check("hero offers three paths", (await page.locator(".hero__path").count()) === 3);
+  await attempt(page.click('.site-nav__link:has-text("trading")'));
+  await attempt(page.click(".site-header__logo"));
+  check("tagline doesn't retype on return", (await text(page, '.hero__tag [aria-hidden="true"]')) === TAGLINE);
+  check("experience section links the PDF", (await page.locator('#experience a[href$="resume.pdf"]').count()) === 1);
 ```
 
 Change the section list to start with `"trading"`: `for (const id of ["trading", "impact", "about", "experience", "projects", "skills", "awards", "contact"]) {`.
@@ -1516,15 +1856,18 @@ Replace the mobile check `check("mobile hero renders", (await mobile.locator(".h
 
 ```js
   check("mobile hero renders", (await mobile.locator(".hero__title").count()) === 1);
-  check(
-    "reduced motion shows the full tagline at once",
-    ((await mobile.locator('.hero__tag [aria-hidden="true"]').textContent()) ?? "") ===
-      "> pravesh pandey · sde @ amazon alexa ai · quant dev"
-  );
+  check("reduced motion shows the full tagline at once", (await text(mobile, '.hero__tag [aria-hidden="true"]')) === TAGLINE);
 ```
 
 - [ ] **Step 2: Run the verify procedure to see them fail.**
-Expected: `hero renders`, `hero offers three paths`, `section #trading exists`, `mobile hero renders` and the tagline check FAIL.
+Expected: these checks FAIL:
+- `hero renders`
+- `hero offers three paths`
+- `tagline doesn't retype on return`
+- `experience section links the PDF`
+- `section #trading exists`
+- `mobile hero renders`
+- the reduced-motion tagline check
 
 - [ ] **Step 3: Create** `client/src/hooks/useTypewriter.js`:
 
@@ -1545,9 +1888,12 @@ export const useTypewriter = (text, msPerChar) => {
 };
 ```
 
-- [ ] **Step 4: Rewrite** `client/src/components/sections/HeroSection.jsx`. The tagline adds the name in front of the spec's `> sde @ amazon alexa ai · quant dev`, because the old hero showed the name and recruiters scan for it.
+- [ ] **Step 4: Rewrite** `client/src/components/sections/HeroSection.jsx`.
+- The tagline types once per visit. `firstVisit` is captured once per mount, so the module flag set after the first render can't cut the typing short.
+- Path 3 says "Experience," matching the `[3] experience` menu item.
 
 ```jsx
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useReducedMotion } from "framer-motion";
 import { useTypewriter } from "@hooks/useTypewriter.js";
@@ -1558,12 +1904,20 @@ const TAGLINE = "> pravesh pandey · sde @ amazon alexa ai · quant dev";
 const PATHS = [
   { key: "1", to: "/work-with-me", title: "Hire me", detail: "Projects & Upwork" },
   { key: "2", to: "/trading", title: "Trading systems", detail: "Order flow, backtesting" },
-  { key: "3", to: { pathname: "/", hash: "#experience" }, title: "Résumé", detail: "Experience & CV" }
+  { key: "3", to: { pathname: "/", hash: "#experience" }, title: "Experience", detail: "Track record & CV" }
 ];
+
+// The tagline types out once per visit; coming back to the home page shows it instantly.
+let taglineTyped = false;
 
 export const HeroSection = () => {
   const reduceMotion = useReducedMotion();
-  const typed = useTypewriter(TAGLINE, reduceMotion ? 0 : 35);
+  const [firstVisit] = useState(() => !taglineTyped);
+  const typed = useTypewriter(TAGLINE, reduceMotion || !firstVisit ? 0 : 35);
+
+  useEffect(() => {
+    taglineTyped = true;
+  }, []);
 
   return (
     <section className="hero" aria-labelledby="hero-title">
@@ -1813,7 +2167,25 @@ and `client/src/components/sections/impactSection.css`:
 | `AwardsSection.jsx` | `"05"` | `"06"` |
 | `ContactSection.jsx` | `"06"` | `"07"` |
 
-- [ ] **Step 11: About copy.** In `client/src/components/sections/AboutSection.jsx`, append this sentence to the end of the second paragraph (after "…stay reliable as they grow."):
+- [ ] **Step 11: CV link in Experience.** This gives phones a PDF link outside the header. In `client/src/components/sections/ExperienceSection.jsx`, add directly after `<ExperienceTimeline items={experienceTimeline} />`:
+
+```jsx
+    <p className="experience__cv">
+      <a className="button" href={`${import.meta.env.BASE_URL}resume.pdf`} target="_blank" rel="noreferrer">
+        download cv.pdf →
+      </a>
+    </p>
+```
+
+and append to `client/src/pages/homePage.css`:
+
+```css
+.experience__cv {
+  margin: 1.4rem 0 0;
+}
+```
+
+- [ ] **Step 12: About copy.** In `client/src/components/sections/AboutSection.jsx`, append this sentence to the end of the second paragraph (after "…stay reliable as they grow."):
 
 ```
  Outside Amazon, I build trading systems for Indian markets (order-flow detection and options research) with the same production discipline.
@@ -1821,10 +2193,10 @@ and `client/src/components/sections/impactSection.css`:
 
 In the Snapshot list, change the Focus line to `<strong>Focus</strong> Distributed systems · Trading systems · Backend services`.
 
-- [ ] **Step 12: Run the verify procedure.**
-Expected: all checks pass (37/37).
+- [ ] **Step 13: Run the verify procedure.**
+Expected: every check passes. Note the `index-*.js` gzip size (must be ≤ 113.5 kB).
 
-- [ ] **Step 13: Commit.**
+- [ ] **Step 14: Commit.**
 
 ```bash
 git add client/src client/scripts/verify-redesign.mjs
@@ -1833,15 +2205,19 @@ git add client/src client/scripts/verify-redesign.mjs
 
 ---
 
-### Task 7: Project cards with case-study and hire links
+### Task 7: Project cards with case-study, hire and anchor links
 
 **Files:**
 - Rewrite: `client/src/components/projects/ProjectGrid.jsx`, `client/src/components/projects/projectGrid.css`
+- Rewrite: `client/src/pages/ProjectsPage.jsx`
 - Modify: `client/scripts/verify-redesign.mjs`
 
 **Interfaces:**
-- Consumes: project `slug`s (Task 1), `caseStudies` (Task 2).
-- Produces: every `.project-card` is an `<article>` (never an `<a>`, so links can nest), with a `.project-card__hire` link and, when a case study exists, a link to `/case-studies/<slug>`.
+- Consumes: project `slug`s (Task 1), `caseStudies` (Task 2), `useDocumentTitle` (Task 5).
+- Produces:
+  - Every `.project-card` is an `<article id={slug}>`, never an `<a>`, so links can nest inside it.
+  - Each card has a `.project-card__hire` link, plus a link to `/case-studies/<slug>` when a case study exists.
+  - `/projects#<slug>` scrolls to that card (used by the shell's `open` in Task 9).
 
 - [ ] **Step 1: Write the failing browser checks.** In `client/scripts/verify-redesign.mjs`, after `check("projects page shows 12 cards", ...)`, insert:
 
@@ -1851,10 +2227,19 @@ git add client/src client/scripts/verify-redesign.mjs
     "three cards link to case studies",
     (await page.locator('.project-card a[href*="/case-studies/"]').count()) === 3
   );
+  await page.goto(`${BASE}/projects#tamperscripts`, { waitUntil: "networkidle" });
+  await page.waitForTimeout(1500);
+  check(
+    "projects page scrolls to a card from the URL",
+    await page.evaluate(() => {
+      const top = document.getElementById("tamperscripts")?.getBoundingClientRect().top ?? -1;
+      return top >= 0 && top < window.innerHeight / 2;
+    })
+  );
 ```
 
 - [ ] **Step 2: Run the verify procedure to see them fail.**
-Expected: both new checks FAIL (0 found).
+Expected: the three new checks FAIL.
 
 - [ ] **Step 3: Rewrite** `client/src/components/projects/ProjectGrid.jsx`:
 
@@ -1874,6 +2259,7 @@ export const ProjectGrid = ({ projects }) => {
       {projects.map((project, index) => (
         <motion.article
           key={project.slug}
+          id={project.slug}
           className="project-card"
           initial={{ opacity: reduceMotion ? 1 : 0, y: reduceMotion ? 0 : 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -1919,7 +2305,7 @@ export const ProjectGrid = ({ projects }) => {
 };
 ```
 
-- [ ] **Step 4: Rewrite** `client/src/components/projects/projectGrid.css`. `minmax(min(100%, 320px), 1fr)` replaces the old fixed `350px` minimum, which overflowed 375px screens:
+- [ ] **Step 4: Rewrite** `client/src/components/projects/projectGrid.css`. `minmax(min(100%, 320px), 1fr)` replaces the old fixed `350px` minimum, which overflowed 375px screens.
 
 ```css
 .project-grid {
@@ -1937,6 +2323,7 @@ export const ProjectGrid = ({ projects }) => {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   transition: border-color 0.15s ease;
+  scroll-margin-top: calc(var(--header-height) + 1rem);
 }
 
 .project-card:hover {
@@ -1995,14 +2382,40 @@ export const ProjectGrid = ({ projects }) => {
 }
 ```
 
-- [ ] **Step 5: Run the verify procedure.**
-Expected: all checks pass (39/39).
+- [ ] **Step 5: Rewrite** `client/src/pages/ProjectsPage.jsx`:
 
-- [ ] **Step 6: Commit.**
+```jsx
+import { PageIntro } from "@components/common/PageIntro.jsx";
+import { ProjectGrid } from "@components/projects/ProjectGrid.jsx";
+import { projectShowcase } from "@data/profile.js";
+import { useHashScroll } from "@hooks/useHashScroll.js";
+import { useDocumentTitle } from "@hooks/useDocumentTitle.js";
+
+export const ProjectsPage = () => {
+  useHashScroll();
+  useDocumentTitle("Projects");
+
+  return (
+    <div className="page projects-page">
+      <PageIntro
+        eyebrow="Projects"
+        title="All projects."
+        lead="Everything from trading systems and infrastructure to AI, IoT, automation, and full-stack builds."
+      />
+      <ProjectGrid projects={projectShowcase} />
+    </div>
+  );
+};
+```
+
+- [ ] **Step 6: Run the verify procedure.**
+Expected: every check passes.
+
+- [ ] **Step 7: Commit.**
 
 ```bash
-git add client/src/components/projects client/scripts/verify-redesign.mjs
-# commit subject: "Project cards link to case studies and end with a hire link"
+git add client/src/components/projects client/src/pages/ProjectsPage.jsx client/scripts/verify-redesign.mjs
+# commit subject: "Project cards link to case studies, end with a hire link and can be deep-linked"
 ```
 
 ---
@@ -2024,10 +2437,10 @@ git add client/src/components/projects client/scripts/verify-redesign.mjs
 ```
 
 - [ ] **Step 2: Run the verify procedure.**
-Expected: all checks pass (44/44). If a route overflows, the failure message gives the extra pixels. Find the element with `document.querySelectorAll("*")` filtered by `getBoundingClientRect().right > innerWidth`, fix its CSS (usually a fixed `min-width` or a long unbroken string, which needs `overflow-wrap: anywhere`), then re-run.
+Expected: every check passes. If a route overflows, the failure message gives the extra pixels. Find the element with `[...document.querySelectorAll("*")].filter((el) => el.getBoundingClientRect().right > innerWidth)`, fix its CSS (usually a fixed `min-width`, or a long unbroken string that needs `overflow-wrap: anywhere`), and re-run.
 
 - [ ] **Step 3: Bundle budget.** From the `npm run build` output, read the gzip size of `dist/assets/index-*.js`.
-Expected: ≤ 113.5 kB. If it's over, check that nothing imports a large module eagerly with `npx vite-bundle-visualizer`; no install is needed, since npx fetches it temporarily. Fix the cause rather than raising the budget.
+Expected: ≤ 113.5 kB. If it's over, look for something imported eagerly that could be lazy, and fix the cause rather than raising the budget. `npx vite-bundle-visualizer` shows what's large; npx fetches it temporarily, so nothing gets installed.
 
 - [ ] **Step 4: Lighthouse (manual).** With `vite preview` running:
 
@@ -2065,16 +2478,15 @@ git add client/scripts/verify-redesign.mjs CLAUDE.md
 
 - [ ] **Step 7: STOP for review.** Send Pravesh:
 - desktop and mobile screenshots (`/tmp/portfolio-desktop.png`, `/tmp/portfolio-mobile.png`, plus a `/trading` and a case-study screenshot);
-- the three case studies' copy as rendered;
+- the three case studies' copy as rendered. Point out the decision-log rationales and the "Next:" lines; both are drafts he needs to confirm or edit.
 - the bundle size and Lighthouse score.
 
 Ask whether to push the branch and open a PR for phase 1. Do not push without a yes.
 
 ---
-
 # Phase 2 — Shell drawer
 
-### Task 9: Shell commands and hotkey rule
+### Task 9: Shell commands and key rules
 
 **Files:**
 - Create: `client/src/shell/commands.js`, `client/src/shell/hotkey.js`
@@ -2083,10 +2495,12 @@ Ask whether to push the branch and open a PR for phase 1. Do not push without a 
 **Interfaces:**
 - Consumes: `projectShowcase` with slugs (Task 1); `caseStudies` (Task 2); `EMAIL`, `UPWORK_URL` (Task 4).
 - Produces:
-  - `runCommand(input: string) → { lines: string[], navigate?: string, href?: string, clear?: true, close?: true }`. `navigate` is an in-app route; a relative `href` is resolved against `import.meta.env.BASE_URL` by the UI.
+  - `runCommand(input: string) → { lines: string[], navigate?: string, href?: string, clear?: true, close?: true, shortcuts?: boolean }`. `navigate` is an in-app route, which may include a `#hash`. A relative `href` is resolved against `import.meta.env.BASE_URL` by the UI. `shortcuts` asks the UI to turn single-key shortcuts on or off.
   - `complete(input: string) → string[]`: full replacement inputs.
-  - `commandNames: string[]`.
+  - `commandNames: string[]`: visible commands only; the hidden `sudo` is excluded.
   - `isShellToggleKey(event, shellInput | null) → boolean`.
+  - `navShortcut(event, items: Array<{ key, path }>) → string | null`.
+- Commands: `help`, `whoami`, `hire`, `upwork`, `trading`, `resume [--pdf]`, `ls projects`, `open <project>`, `cat <project>`, `lab`, `contact`, `man <command>`, `shortcuts on|off`, `clear`, `exit`, and the hidden `sudo hire`.
 
 - [ ] **Step 1: Write the failing tests** `client/tests/shell.test.js`:
 
@@ -2094,7 +2508,7 @@ Ask whether to push the branch and open a PR for phase 1. Do not push without a 
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { runCommand, complete, commandNames } from "../src/shell/commands.js";
-import { isShellToggleKey } from "../src/shell/hotkey.js";
+import { isShellToggleKey, navShortcut } from "../src/shell/hotkey.js";
 
 test("help lists every command", () => {
   const { lines } = runCommand("help");
@@ -2104,7 +2518,7 @@ test("help lists every command", () => {
 });
 
 test("unknown commands suggest help", () => {
-  assert.deepEqual(runCommand("sudo rm -rf").lines, ["command not found: sudo. Try help"]);
+  assert.deepEqual(runCommand("rm -rf /").lines, ["command not found: rm. Try help"]);
 });
 
 test("blank input does nothing", () => {
@@ -2121,9 +2535,9 @@ test("open goes to a case study when one exists", () => {
   assert.deepEqual(result.lines, ["→ opened FlowPulse"]);
 });
 
-test("open falls back to the projects page for projects without a case study", () => {
+test("open falls back to the project's card for projects without a case study", () => {
   const result = runCommand("open tamperscripts");
-  assert.equal(result.navigate, "/projects");
+  assert.equal(result.navigate, "/projects#tamperscripts");
   assert.match(result.lines[0], /^TamperScripts Collection: /);
 });
 
@@ -2152,12 +2566,48 @@ test("clear and exit signal the drawer", () => {
   assert.equal(runCommand("exit").close, true);
 });
 
+test("cat prints a summary without leaving the page", () => {
+  const study = runCommand("cat flowpulse");
+  assert.equal(study.navigate, undefined);
+  assert.equal(study.lines[0], "FlowPulse");
+  assert.ok(study.lines.includes("highlights:"));
+  assert.match(runCommand("cat covin").lines[0], /^Covin Web Application: /);
+  assert.match(runCommand("cat nope").lines[0], /^cat: no project named nope/);
+  assert.match(runCommand("cat").lines[0], /^usage: cat/);
+});
+
+test("man explains commands", () => {
+  assert.deepEqual(runCommand("man open").lines, ["open <project> — open a project or case study"]);
+  assert.deepEqual(runCommand("man sudo").lines, ["man: no manual entry for sudo"]);
+  assert.deepEqual(runCommand("man").lines, ["usage: man <command>"]);
+});
+
+test("sudo hire is a hidden shortcut to hiring", () => {
+  const result = runCommand("sudo hire");
+  assert.equal(result.navigate, "/work-with-me");
+  assert.equal(result.lines[0], "[sudo] permission granted.");
+  assert.match(runCommand("sudo rm -rf /").lines[0], /^nice try/);
+  assert.ok(!commandNames.includes("sudo"));
+  assert.ok(!runCommand("help").lines.some((line) => line.startsWith("sudo")));
+});
+
+test("shortcuts can be turned off and on", () => {
+  assert.equal(runCommand("shortcuts off").shortcuts, false);
+  assert.equal(runCommand("shortcuts on").shortcuts, true);
+  assert.equal(runCommand("shortcuts").shortcuts, undefined);
+});
+
 test("tab completion completes commands and open slugs", () => {
   assert.deepEqual(complete("tr"), ["trading"]);
   assert.deepEqual(complete("open fl"), ["open flowpulse"]);
   assert.deepEqual(complete("ls p"), ["ls projects"]);
   assert.deepEqual(complete("open c"), ["open cell-phone-controlled-car", "open covin", "open curves"]);
+  assert.deepEqual(complete("cat lo"), ["cat localcache"]);
+  assert.deepEqual(complete("man op"), ["man open"]);
+  assert.deepEqual(complete("shortcuts o"), ["shortcuts on", "shortcuts off"]);
+  assert.deepEqual(complete("su"), [], "hidden commands do not complete");
   assert.deepEqual(complete("zzz"), []);
+  assert.deepEqual(complete("hire now"), []);
 });
 
 const element = (tagName, extra = {}) => ({ tagName, isContentEditable: false, value: "", ...extra });
@@ -2186,6 +2636,21 @@ test("other keys and modified backticks never toggle", () => {
   assert.equal(isShellToggleKey(key(element("BODY"), { key: "a" }), null), false);
   assert.equal(isShellToggleKey(key(element("BODY"), { ctrlKey: true }), null), false);
 });
+
+const NAV = [
+  { path: "/work-with-me", key: "1" },
+  { path: "/trading", key: "2" }
+];
+
+test("number keys map to nav items outside form fields", () => {
+  assert.equal(navShortcut(key(element("BODY"), { key: "2" }), NAV), "/trading");
+  assert.equal(navShortcut(key(element("BODY"), { key: "9" }), NAV), null);
+});
+
+test("number keys type normally in form fields and with modifiers", () => {
+  assert.equal(navShortcut(key(element("INPUT"), { key: "1" }), NAV), null);
+  assert.equal(navShortcut(key(element("BODY"), { key: "1", metaKey: true }), NAV), null);
+});
 ```
 
 - [ ] **Step 2: Run them to verify they fail.**
@@ -2200,9 +2665,35 @@ import { projectShowcase } from "../data/profile.js";
 import { caseStudies } from "../data/caseStudies.js";
 import { EMAIL, UPWORK_URL } from "../data/links.js";
 
-// A command returns { lines, navigate?, href?, clear?, close? }.
-// navigate is an in-site route; href opens in a new tab (relative hrefs resolve against BASE_URL).
+// A command returns { lines, navigate?, href?, clear?, close?, shortcuts? }.
+// navigate is an in-site route; href opens in a new tab (relative hrefs resolve against BASE_URL);
+// shortcuts (boolean) turns the single-key shortcuts on or off.
 const opened = (path, title) => ({ lines: [`→ opened ${title}`], navigate: path });
+
+const findStudy = (slug) => caseStudies.find((item) => item.slug === slug);
+const findProject = (slug) => projectShowcase.find((item) => item.slug === slug);
+
+const openProject = (slug) => {
+  if (!slug) return { lines: ["usage: open <project>   (see: ls projects)"] };
+  const study = findStudy(slug);
+  if (study) return opened(`/case-studies/${slug}`, study.title);
+  const project = findProject(slug);
+  if (project) return { lines: [`${project.title}: ${project.tagline}`, "→ opened Projects"], navigate: `/projects#${slug}` };
+  return { lines: [`open: no project named ${slug}. Try ls projects`] };
+};
+
+const catProject = (slug) => {
+  if (!slug) return { lines: ["usage: cat <project>   (see: ls projects)"] };
+  const study = findStudy(slug);
+  if (study) {
+    return {
+      lines: [study.title, "", study.summary, "", "highlights:", ...study.highlights.map((item) => `  - ${item}`)]
+    };
+  }
+  const project = findProject(slug);
+  if (project) return { lines: [`${project.title}: ${project.tagline}`, "", project.description] };
+  return { lines: [`cat: no project named ${slug}. Try ls projects`] };
+};
 
 const COMMANDS = [
   { name: "help", usage: "help", summary: "list commands", run: () => ({ lines: helpLines() }) },
@@ -2241,6 +2732,7 @@ const COMMANDS = [
         : { lines: ["usage: ls projects"] }
   },
   { name: "open", usage: "open <project>", summary: "open a project or case study", run: (args) => openProject(args[0]) },
+  { name: "cat", usage: "cat <project>", summary: "print a project summary here", run: (args) => catProject(args[0]) },
   { name: "lab", usage: "lab", summary: "order-flow playground", run: () => ({ lines: ["lab: coming soon"] }) },
   {
     name: "contact",
@@ -2248,22 +2740,46 @@ const COMMANDS = [
     summary: "how to reach me",
     run: () => ({ lines: [`email   ${EMAIL}`, "form    /#contact"] })
   },
+  {
+    name: "man",
+    usage: "man <command>",
+    summary: "explain a command",
+    run: (args) => {
+      if (!args[0]) return { lines: ["usage: man <command>"] };
+      const command = COMMANDS.find((item) => item.name === args[0] && !item.hidden);
+      return command
+        ? { lines: [`${command.usage} — ${command.summary}`] }
+        : { lines: [`man: no manual entry for ${args[0]}`] };
+    }
+  },
+  {
+    name: "shortcuts",
+    usage: "shortcuts on|off",
+    summary: "single-key shortcuts (` and 1–5)",
+    run: (args) => {
+      if (args[0] === "on") return { lines: ["keyboard shortcuts on"], shortcuts: true };
+      if (args[0] === "off") return { lines: ["keyboard shortcuts off — use the >_ Shell button and the menu"], shortcuts: false };
+      return { lines: ["usage: shortcuts on|off"] };
+    }
+  },
   { name: "clear", usage: "clear", summary: "clear the screen", run: () => ({ lines: [], clear: true }) },
-  { name: "exit", usage: "exit", summary: "close the shell", run: () => ({ lines: [], close: true }) }
+  { name: "exit", usage: "exit", summary: "close the shell", run: () => ({ lines: [], close: true }) },
+  {
+    name: "sudo",
+    hidden: true,
+    usage: "sudo <command>",
+    summary: "",
+    run: (args) =>
+      args[0] === "hire"
+        ? { lines: ["[sudo] permission granted.", "→ opened Work with me"], navigate: "/work-with-me" }
+        : { lines: ["nice try. (hint: sudo hire)"] }
+  }
 ];
 
-const helpLines = () => COMMANDS.map((command) => `${command.usage.padEnd(18)}${command.summary}`);
+const visible = COMMANDS.filter((command) => !command.hidden);
+const helpLines = () => visible.map((command) => `${command.usage.padEnd(18)}${command.summary}`);
 
-const openProject = (slug) => {
-  if (!slug) return { lines: ["usage: open <project>   (see: ls projects)"] };
-  const study = caseStudies.find((item) => item.slug === slug);
-  if (study) return opened(`/case-studies/${slug}`, study.title);
-  const project = projectShowcase.find((item) => item.slug === slug);
-  if (project) return { lines: [`${project.title}: ${project.tagline}`, "→ opened Projects"], navigate: "/projects" };
-  return { lines: [`open: no project named ${slug}. Try ls projects`] };
-};
-
-export const commandNames = COMMANDS.map((command) => command.name);
+export const commandNames = visible.map((command) => command.name);
 
 export const runCommand = (input) => {
   const [name, ...args] = input.trim().toLowerCase().split(/\s+/);
@@ -2273,14 +2789,23 @@ export const runCommand = (input) => {
   return command.run(args);
 };
 
+const ARGUMENTS = {
+  open: () => projectShowcase.map((project) => project.slug),
+  cat: () => projectShowcase.map((project) => project.slug),
+  ls: () => ["projects"],
+  man: () => commandNames,
+  shortcuts: () => ["on", "off"]
+};
+
 // Returns full replacement inputs that complete `input`, e.g. "open fl" → ["open flowpulse"].
 export const complete = (input) => {
   const text = input.trimStart().toLowerCase();
   const [first = "", ...rest] = text.split(/\s+/);
   if (rest.length === 0) return commandNames.filter((name) => name.startsWith(first));
-  if (rest.length > 1) return [];
-  const options = first === "open" ? projectShowcase.map((project) => project.slug) : first === "ls" ? ["projects"] : [];
-  return options.filter((option) => option.startsWith(rest[0])).map((option) => `${first} ${option}`);
+  if (rest.length > 1 || !ARGUMENTS[first]) return [];
+  return ARGUMENTS[first]()
+    .filter((option) => option.startsWith(rest[0]))
+    .map((option) => `${first} ${option}`);
 };
 ```
 
@@ -2289,27 +2814,35 @@ export const complete = (input) => {
 ```js
 const EDITABLE_TAGS = new Set(["INPUT", "TEXTAREA", "SELECT"]);
 
+const isTypingIn = (target) => Boolean(target) && (EDITABLE_TAGS.has(target.tagName) || target.isContentEditable);
+const hasModifier = (event) => event.ctrlKey || event.metaKey || event.altKey;
+
 // True when a keydown should open/close the shell: a bare backtick outside form fields,
 // or inside the shell's own input while that input is empty.
 export const isShellToggleKey = (event, shellInput) => {
-  if (event.key !== "`" || event.ctrlKey || event.metaKey || event.altKey) return false;
-  const target = event.target;
-  if (shellInput && target === shellInput) return shellInput.value === "";
-  if (!target) return true;
-  return !EDITABLE_TAGS.has(target.tagName) && !target.isContentEditable;
+  if (event.key !== "`" || hasModifier(event)) return false;
+  if (shellInput && event.target === shellInput) return shellInput.value === "";
+  return !isTypingIn(event.target);
+};
+
+// The route for a bare number key matching a nav item's key ("1"–"5"), or null.
+// Never fires while typing, so digits still work in forms and in the shell.
+export const navShortcut = (event, items) => {
+  if (hasModifier(event) || isTypingIn(event.target)) return null;
+  return items.find((item) => item.key === event.key)?.path ?? null;
 };
 ```
 
 - [ ] **Step 5: Run tests to verify they pass.**
 
 Run: `cd client && npm test`
-Expected: `ℹ pass 20`, `ℹ fail 0` (16 shell tests and 4 data tests).
+Expected: `ℹ pass 26`, `ℹ fail 0` (22 shell tests and 4 data tests).
 
 - [ ] **Step 6: Commit.**
 
 ```bash
 git add client/src/shell client/tests/shell.test.js
-# commit subject: "Add shell command set and backtick hotkey rule"
+# commit subject: "Add shell commands, number-key and backtick rules"
 ```
 
 ---
@@ -2317,59 +2850,87 @@ git add client/src/shell client/tests/shell.test.js
 ### Task 10: Shell drawer UI
 
 **Files:**
-- Create: `client/src/shell/useShellState.js`, `client/src/shell/ShellHost.jsx`, `client/src/shell/ShellDrawer.jsx`, `client/src/shell/shell.css`
+- Create: `client/src/components/common/ChunkErrorBoundary.jsx`
+- Create: `client/src/shell/shortcuts.js`, `client/src/shell/useShellState.js`, `client/src/shell/ShellHost.jsx`, `client/src/shell/ShellDrawer.jsx`, `client/src/shell/shell.css`
+- Modify: `client/src/components/navigation/SiteHeader.jsx` (number keys)
 - Modify: `client/src/layout/AppLayout.jsx`
 - Modify: `client/scripts/verify-redesign.mjs`
 - Modify: `CLAUDE.md`
 
 **Interfaces:**
-- Consumes: `runCommand`, `complete`, `isShellToggleKey` (Task 9); `StatusBar` (Task 4).
-- Produces: `<ShellHost />` (replaces `<StatusBar />` in `AppLayout`); DOM contract for tests: button `.status-bar__shell`, drawer `#shell`, input `.shell__input`, chips `.shell__chips .chip`.
+- Consumes:
+  - `runCommand`, `complete`, `isShellToggleKey`, `navShortcut` (Task 9);
+  - `StatusBar` (Task 4) and `SiteHeader`'s `goTo` (Task 4);
+  - `--shell-height` in `body`'s padding (Task 3).
+- Produces:
+  - `<ChunkErrorBoundary className?>`, reused for `/lab` in Task 14.
+  - `shortcutsEnabled()` and `setShortcutsEnabled(boolean)`.
+  - `<ShellHost />`, which replaces `<StatusBar />` in `AppLayout`.
+  - DOM contract for tests: button `.status-bar__shell`, drawer `#shell`, input `.shell__input`, chips `.shell__chips .chip`, `body[data-shell]`.
 
 - [ ] **Step 1: Write the failing browser checks.** In `client/scripts/verify-redesign.mjs`, desktop pass, insert directly before `check("no console errors (desktop)", ...)`:
 
 ```js
   // --- Shell drawer ---
   await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
+  const isActive = (cls) => page.evaluate((name) => document.activeElement?.classList.contains(name) ?? false, cls);
   check("shell is closed by default", (await page.locator("#shell").count()) === 0);
-  await page.click(".status-bar__shell");
-  await page.waitForSelector("#shell", { timeout: 5000 }).catch(() => {});
+  await attempt(page.click(".status-bar__shell"));
+  await attempt(page.waitForSelector("#shell"));
   check("shell opens from the status bar", (await page.locator("#shell").count()) === 1);
+  check("shell input has focus", await isActive("shell__input"));
   check(
-    "shell input has focus",
-    await page.evaluate(() => document.activeElement?.classList.contains("shell__input") ?? false)
+    "open shell pads the page",
+    await page.evaluate(() => parseFloat(getComputedStyle(document.body).paddingBottom) > 200)
   );
+  await page.keyboard.press("Tab");
+  check("Tab on an empty prompt leaves the shell (no trap)", !(await isActive("shell__input")));
+  await attempt(page.focus(".shell__input"));
   await page.keyboard.type("open flowpulse");
   await page.keyboard.press("Enter");
-  await page
-    .waitForFunction(() => window.location.pathname.endsWith("/case-studies/flowpulse"), null, { timeout: 5000 })
-    .catch(() => {});
+  await attempt(page.waitForURL("**/case-studies/flowpulse"));
   check("open flowpulse navigates", page.url().includes("/case-studies/flowpulse"));
   await page.keyboard.press("Escape");
   check("Esc closes the shell", (await page.locator("#shell").count()) === 0);
-  check(
-    "focus returns to the shell button",
-    await page.evaluate(() => document.activeElement?.classList.contains("status-bar__shell") ?? false)
-  );
+  check("focus returns to the shell button", await isActive("status-bar__shell"));
   await page.keyboard.press("`");
-  await page.waitForSelector("#shell", { timeout: 5000 }).catch(() => {});
+  await attempt(page.waitForSelector("#shell"));
   check("backtick opens the shell", (await page.locator("#shell").count()) === 1);
   await page.keyboard.press("`");
   check("backtick in the empty shell input closes it", (await page.locator("#shell").count()) === 0);
+  await page.keyboard.press("2");
+  await attempt(page.waitForURL("**/trading"));
+  check("number key 2 opens /trading", page.url().endsWith("/trading"));
+  await page.keyboard.press("`");
+  await attempt(page.waitForSelector("#shell"));
+  await page.keyboard.type("shortcuts off");
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("Escape");
+  await page.keyboard.press("`");
+  check("shortcuts off disables the backtick", (await page.locator("#shell").count()) === 0);
+  await attempt(page.click(".status-bar__shell"));
+  await attempt(page.waitForSelector("#shell"));
+  await page.keyboard.type("shortcuts on");
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("Escape");
   await page.goto(`${BASE}/#contact`, { waitUntil: "networkidle" });
-  await page.focus("#name");
-  await page.keyboard.type("a`b");
+  const formFocused = await attempt(page.focus("#name"));
+  await page.keyboard.type("a`2b");
   check(
-    "backtick types normally in form fields",
-    (await page.inputValue("#name")) === "a`b" && (await page.locator("#shell").count()) === 0
+    "backtick and digits type normally in form fields",
+    formFocused &&
+      (await page.inputValue("#name")) === "a`2b" &&
+      (await page.locator("#shell").count()) === 0 &&
+      page.url().includes("#contact")
   );
 ```
 
-After `await page.close();` (end of the desktop pass), insert the blocked-storage check (Review Focus 2):
+After `await page.close();` (end of the desktop pass), insert the blocked-storage and stale-deploy checks (Review Focus 1 and 3):
 
 ```js
   // --- Storage blocked (private mode) ---
   const blocked = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  blocked.setDefaultTimeout(5000);
   const blockedErrors = [];
   blocked.on("pageerror", (e) => blockedErrors.push(String(e)));
   await blocked.addInitScript(() => {
@@ -2380,34 +2941,99 @@ After `await page.close();` (end of the desktop pass), insert the blocked-storag
     });
   });
   await blocked.goto(`${BASE}/`, { waitUntil: "networkidle" });
-  await blocked.click(".status-bar__shell");
-  await blocked.waitForSelector("#shell", { timeout: 5000 }).catch(() => {});
+  await attempt(blocked.click(".status-bar__shell"));
+  await attempt(blocked.waitForSelector("#shell"));
   check(
     "shell works with storage blocked",
     (await blocked.locator("#shell").count()) === 1 && blockedErrors.length === 0,
     blockedErrors.join(" | ").slice(0, 300)
   );
   await blocked.close();
+
+  // --- Stale tab after a redeploy: the shell chunk is gone ---
+  const stale = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  stale.setDefaultTimeout(5000);
+  await stale.route("**/ShellDrawer-*.js", (route) => route.abort());
+  await stale.goto(`${BASE}/`, { waitUntil: "networkidle" });
+  await attempt(stale.click(".status-bar__shell"));
+  await attempt(stale.waitForSelector('[role="alert"]'));
+  check(
+    "missing shell chunk shows a reload prompt and the page survives",
+    (await text(stale, '[role="alert"]')).includes("updated") && (await stale.locator(".hero__title").count()) === 1
+  );
+  await stale.close();
 ```
 
-In the mobile pass, insert before the overflow loop:
+In the mobile pass, insert directly before the overflow loop:
 
 ```js
   await mobile.goto(`${BASE}/`, { waitUntil: "networkidle" });
-  await mobile.click(".status-bar__shell");
-  await mobile.waitForSelector(".shell__chips", { timeout: 5000 }).catch(() => {});
-  await mobile.click('.shell__chips .chip:has-text("trading")');
-  await mobile
-    .waitForFunction(() => window.location.pathname.endsWith("/trading"), null, { timeout: 5000 })
-    .catch(() => {});
+  await attempt(mobile.click(".status-bar__shell"));
+  await attempt(mobile.click('.shell__chips .chip:has-text("trading")'));
+  await attempt(mobile.waitForURL("**/trading"));
   check("mobile shell chip navigates", mobile.url().endsWith("/trading"));
-  await mobile.click(".status-bar__shell");
+  await attempt(mobile.click(".status-bar__shell"));
 ```
 
 - [ ] **Step 2: Run the verify procedure to see them fail.**
-Expected: every new shell check FAILS (`.status-bar__shell` does not exist; clicks time out).
+Expected: the shell checks FAIL quickly, because `.status-bar__shell` doesn't exist yet. The script still finishes and prints its summary.
 
-- [ ] **Step 3: Create** `client/src/shell/useShellState.js`:
+- [ ] **Step 3: Create** `client/src/components/common/ChunkErrorBoundary.jsx`:
+
+```jsx
+import { Component } from "react";
+
+// Lazy chunks have hashed file names. After a redeploy, a tab opened earlier asks for a
+// chunk that no longer exists; without this boundary React unmounts the whole app.
+export class ChunkErrorBoundary extends Component {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  render() {
+    if (!this.state.failed) return this.props.children;
+    return (
+      <div className={this.props.className ?? "page"} role="alert">
+        <p>This part of the site was just updated.</p>
+        <button type="button" className="button" onClick={() => window.location.reload()}>
+          reload
+        </button>
+      </div>
+    );
+  }
+}
+```
+
+- [ ] **Step 4: Create** `client/src/shell/shortcuts.js`:
+
+```js
+// Single-key shortcuts (` and 1–5) can be switched off, as WCAG 2.1.4 requires:
+// speech-input users can otherwise trigger them by accident.
+const STORAGE_KEY = "pp-shortcuts";
+let fallback = true; // used when storage is blocked
+
+export const shortcutsEnabled = () => {
+  try {
+    const saved = window.localStorage.getItem(STORAGE_KEY);
+    return saved === null ? fallback : saved === "on";
+  } catch {
+    return fallback;
+  }
+};
+
+export const setShortcutsEnabled = (enabled) => {
+  fallback = enabled;
+  try {
+    window.localStorage.setItem(STORAGE_KEY, enabled ? "on" : "off");
+  } catch {
+    // Storage unavailable: the choice lasts for this page view.
+  }
+};
+```
+
+- [ ] **Step 5: Create** `client/src/shell/useShellState.js`:
 
 ```js
 import { useCallback, useEffect, useState } from "react";
@@ -2446,19 +3072,24 @@ export const useShellState = () => {
 };
 ```
 
-- [ ] **Step 4: Create** `client/src/shell/ShellHost.jsx`:
+- [ ] **Step 6: Create** `client/src/shell/ShellHost.jsx`:
 
 ```jsx
-import { lazy, Suspense, useCallback, useEffect, useRef } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { StatusBar } from "@components/navigation/StatusBar.jsx";
+import { ChunkErrorBoundary } from "@components/common/ChunkErrorBoundary.jsx";
 import { useShellState } from "./useShellState.js";
 import { isShellToggleKey } from "./hotkey.js";
+import { shortcutsEnabled } from "./shortcuts.js";
 import "./shell.css";
 
 const ShellDrawer = lazy(() => import("./ShellDrawer.jsx"));
 
 export const ShellHost = () => {
   const { open, maximized, setOpen, toggleMaximized } = useShellState();
+  // Only a visitor's own click or keypress moves focus into the shell; a drawer restored
+  // from an earlier visit must not steal focus on page load.
+  const [focusOnOpen, setFocusOnOpen] = useState(false);
   const buttonRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -2467,11 +3098,19 @@ export const ShellHost = () => {
     buttonRef.current?.focus();
   }, [setOpen]);
 
-  const toggle = useCallback(() => (open ? close() : setOpen(true)), [open, close, setOpen]);
+  const toggle = useCallback(() => {
+    if (open) {
+      close();
+    } else {
+      setFocusOnOpen(true);
+      setOpen(true);
+    }
+  }, [open, close, setOpen]);
 
   useEffect(() => {
     const onKeyDown = (event) => {
       if (!isShellToggleKey(event, inputRef.current)) return;
+      if (event.target !== inputRef.current && !shortcutsEnabled()) return;
       event.preventDefault();
       toggle();
     };
@@ -2479,17 +3118,25 @@ export const ShellHost = () => {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [toggle]);
 
+  // shell.css sizes the drawer and pads the page from this attribute, so content stays reachable.
+  useEffect(() => {
+    document.body.dataset.shell = open ? (maximized ? "max" : "open") : "";
+  }, [open, maximized]);
+
   return (
     <>
       {open && (
-        <Suspense fallback={null}>
-          <ShellDrawer
-            inputRef={inputRef}
-            maximized={maximized}
-            onToggleMaximize={toggleMaximized}
-            onClose={close}
-          />
-        </Suspense>
+        <ChunkErrorBoundary className="pane shell-error">
+          <Suspense fallback={null}>
+            <ShellDrawer
+              inputRef={inputRef}
+              autoFocus={focusOnOpen}
+              maximized={maximized}
+              onToggleMaximize={toggleMaximized}
+              onClose={close}
+            />
+          </Suspense>
+        </ChunkErrorBoundary>
       )}
       <StatusBar>
         <button
@@ -2502,26 +3149,27 @@ export const ShellHost = () => {
         >
           {">_ Shell"}
         </button>
-        <span className="status-bar__hint">press ` to {open ? "close" : "open"}</span>
+        <span className="status-bar__hint">` shell · 1–5 menu</span>
       </StatusBar>
     </>
   );
 };
 ```
 
-- [ ] **Step 5: Create** `client/src/shell/ShellDrawer.jsx`. It must have a **default** export, because `React.lazy` loads it:
+- [ ] **Step 7: Create** `client/src/shell/ShellDrawer.jsx`. It must have a **default** export, because `React.lazy` loads it.
 
 ```jsx
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { runCommand, complete } from "./commands.js";
+import { setShortcutsEnabled } from "./shortcuts.js";
 
 const SUGGESTIONS = ["help", "hire", "trading", "resume", "lab"];
 const WELCOME = { kind: "out", text: "Type help for commands. The site follows what you type." };
 
 const resolveHref = (href) => (/^https?:/.test(href) ? href : `${import.meta.env.BASE_URL}${href}`);
 
-const ShellDrawer = ({ inputRef, maximized, onToggleMaximize, onClose }) => {
+const ShellDrawer = ({ inputRef, autoFocus, maximized, onToggleMaximize, onClose }) => {
   const navigate = useNavigate();
   const [lines, setLines] = useState([WELCOME]);
   const [input, setInput] = useState("");
@@ -2532,9 +3180,10 @@ const ShellDrawer = ({ inputRef, maximized, onToggleMaximize, onClose }) => {
 
   // On touch screens, focusing the input would pop the keyboard over half the page; chips are the main input there.
   useEffect(() => {
+    if (!autoFocus) return;
     if (window.matchMedia("(pointer: coarse)").matches) sectionRef.current?.focus();
     else inputRef.current?.focus();
-  }, [inputRef]);
+  }, [autoFocus, inputRef]);
 
   useEffect(() => {
     const log = logRef.current;
@@ -2548,6 +3197,7 @@ const ShellDrawer = ({ inputRef, maximized, onToggleMaximize, onClose }) => {
     if (raw.trim()) setPast((current) => [...current, raw]);
     setCursor(null);
     setInput("");
+    if (typeof result.shortcuts === "boolean") setShortcutsEnabled(result.shortcuts);
     if (result.navigate) navigate(result.navigate);
     if (result.href) window.open(resolveHref(result.href), "_blank", "noopener,noreferrer");
     if (result.close) onClose();
@@ -2560,7 +3210,8 @@ const ShellDrawer = ({ inputRef, maximized, onToggleMaximize, onClose }) => {
     } else if (event.key === "Escape") {
       event.preventDefault();
       onClose();
-    } else if (event.key === "Tab") {
+    } else if (event.key === "Tab" && !event.shiftKey && input.trim()) {
+      // Only completes when there's something to complete; otherwise Tab moves focus as usual (no keyboard trap).
       event.preventDefault();
       const options = complete(input);
       if (options.length === 1) setInput(`${options[0]} `);
@@ -2579,13 +3230,7 @@ const ShellDrawer = ({ inputRef, maximized, onToggleMaximize, onClose }) => {
   };
 
   return (
-    <section
-      id="shell"
-      ref={sectionRef}
-      tabIndex={-1}
-      className={`shell${maximized ? " shell--max" : ""}`}
-      aria-label="Shell"
-    >
+    <section id="shell" ref={sectionRef} tabIndex={-1} className="shell" aria-label="Shell">
       <header className="shell__bar">
         <span>pravesh@desk:~</span>
         <span className="shell__actions">
@@ -2636,18 +3281,31 @@ const ShellDrawer = ({ inputRef, maximized, onToggleMaximize, onClose }) => {
 export default ShellDrawer;
 ```
 
-- [ ] **Step 6: Create** `client/src/shell/shell.css`:
+- [ ] **Step 8: Create** `client/src/shell/shell.css`:
 
 ```css
-.shell {
+/* ShellHost sets body[data-shell]; the same height sizes the drawer and pads the page (see global.css). */
+body[data-shell="open"] {
+  --shell-height: 40vh;
+}
+
+body[data-shell="max"] {
+  --shell-height: calc(90vh - var(--status-bar-height));
+}
+
+.shell,
+.shell-error {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: var(--status-bar-height);
+  bottom: calc(var(--status-bar-height) + env(safe-area-inset-bottom));
   z-index: 55;
+}
+
+.shell {
   display: flex;
   flex-direction: column;
-  height: 40vh;
+  height: var(--shell-height, 40vh);
   background: #070908;
   border-top: 2px solid var(--green);
   font-family: var(--font-mono);
@@ -2658,10 +3316,6 @@ export default ShellDrawer;
 
 .shell:focus {
   outline: none;
-}
-
-.shell--max {
-  height: calc(90vh - var(--status-bar-height));
 }
 
 @keyframes shell-up {
@@ -2776,18 +3430,44 @@ export default ShellDrawer;
     display: none;
   }
 
-  .shell {
-    height: 55vh;
+  body[data-shell="open"] {
+    --shell-height: 55vh;
   }
 }
 ```
 
-- [ ] **Step 7: Mount it.** In `client/src/layout/AppLayout.jsx`, replace the `StatusBar` import with `import { ShellHost } from "@/shell/ShellHost.jsx";` and `<StatusBar />` with `<ShellHost />`.
+- [ ] **Step 9: Number keys in the header.** In `client/src/components/navigation/SiteHeader.jsx`:
 
-- [ ] **Step 8: Run the verify procedure.**
-Expected: all checks pass. Also confirm the build output lists a separate `ShellDrawer-*.js` chunk, and that `index-*.js` gzip is still ≤ 113.5 kB.
+Change the React import to `import { useEffect, useState } from "react";`, and add:
 
-- [ ] **Step 9: Docs.** In `CLAUDE.md`, replace the Layout bullet with:
+```jsx
+import { navShortcut } from "@/shell/hotkey.js";
+import { shortcutsEnabled } from "@/shell/shortcuts.js";
+```
+
+Directly before `return (`, add:
+
+```jsx
+  // Number keys follow the menu ([1] hire … [4] projects); goTo changes every render, so re-subscribe each time.
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (!shortcutsEnabled()) return;
+      const path = navShortcut(event, NAV_ITEMS);
+      if (!path) return;
+      event.preventDefault();
+      goTo(path);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  });
+```
+
+- [ ] **Step 10: Mount it.** In `client/src/layout/AppLayout.jsx`, replace the `StatusBar` import with `import { ShellHost } from "@/shell/ShellHost.jsx";` and `<StatusBar />` with `<ShellHost />`.
+
+- [ ] **Step 11: Run the verify procedure.**
+Expected: every check passes. Also confirm the build output lists a separate `ShellDrawer-*.js` chunk, and that `index-*.js` gzip is still ≤ 113.5 kB.
+
+- [ ] **Step 12: Docs.** In `CLAUDE.md`, replace the Layout bullet with:
 
 ```markdown
 - **Layout**: `AppLayout` wraps every page with `SiteHeader`, `SiteFooter` and `ShellHost` (the fixed bottom status bar with the `>_ Shell` button).
@@ -2796,17 +3476,20 @@ Expected: all checks pass. Also confirm the build output lists a separate `Shell
 and add after it:
 
 ```markdown
-- **Shell**: `src/shell/` — `ShellHost` owns the toggle (button, backtick via `hotkey.js`, open/maximized persisted in `localStorage` with try/catch) and lazy-loads `ShellDrawer`. All commands live in `commands.js` and return `{ lines, navigate?, href?, clear?, close? }`; add new commands there with a test in `tests/shell.test.js`.
+- **Shell**: `src/shell/`.
+  - `ShellHost` owns the toggle: the button, the backtick via `hotkey.js`, and open/maximized state persisted in `localStorage` with try/catch. It lazy-loads `ShellDrawer` inside `ChunkErrorBoundary`, and sets `body[data-shell]` so the page pads for the open drawer.
+  - All commands live in `commands.js` and return `{ lines, navigate?, href?, clear?, close?, shortcuts? }`. Add new commands there, with a test in `tests/shell.test.js`.
+  - Single-key shortcuts (`` ` ``, `1`–`5`) honour `shortcuts.js`, so visitors can turn them off with `shortcuts off`.
 ```
 
-- [ ] **Step 10: Commit.**
+- [ ] **Step 13: Commit.**
 
 ```bash
 git add client/src client/scripts/verify-redesign.mjs CLAUDE.md
-# commit subject: "Add the CloudShell-style shell drawer"
+# commit subject: "Add the CloudShell-style shell drawer and number-key navigation"
 ```
 
-- [ ] **Step 11: STOP for review.** Send Pravesh a short screen recording or screenshots of the shell (open, `help`, `open flowpulse`, a mobile chip tap). Ask whether to push phase 2. Do not push without a yes.
+- [ ] **Step 14: STOP for review.** Send Pravesh screenshots or a short recording of the shell: open, `help`, `open flowpulse`, `cat localcache`, `sudo hire`, the number keys, and a mobile chip tap. Ask whether to push phase 2. Do not push without a yes.
 
 ---
 
@@ -2826,6 +3509,7 @@ git add client/src client/scripts/verify-redesign.mjs CLAUDE.md
   - `inject(market, "buy" | "sell") → market`.
   - Constants `TICK`, `LEVELS`, `LOT`, `START_PRICE`, `LARGE_ORDER_LOTS`.
   - `market` = `{ rng, time, bidTicks, institutionalRate, pending, bids: {price,size}[], asks: {price,size}[], trades: {side,price,size}[] }`. Bids are sorted best-first (descending), asks best-first (ascending).
+  - Large orders move the price 10–30 ticks in their direction.
 
 - [ ] **Step 1: Write the failing tests** `client/tests/market.test.js`:
 
@@ -2990,7 +3674,7 @@ export const step = (market) => {
 - [ ] **Step 5: Run tests to verify they pass.**
 
 Run: `cd client && npm test`
-Expected: `ℹ pass 24`, `ℹ fail 0`.
+Expected: `ℹ pass 30`, `ℹ fail 0`.
 
 - [ ] **Step 6: Commit.**
 
@@ -3012,9 +3696,9 @@ git add client/src/sim client/tests/market.test.js
 - Produces:
   - `microprice(book) → number`.
   - `ofi(prevBook, nextBook) → number`.
-  - `createVpin({ bucketVolume, window? }) → { add(trade), value() → number in [0,1] }`.
+  - `createVpin({ bucketVolume, window? }) → { add(trade), value() → number in [0,1] }`. Trades are signed with the tick rule; the lab labels this a "tick-rule variant".
   - `createDetector() → { trade(trade, time) → Alert | null, flow(value, time, price) → Alert | null }`, where `Alert = { time, side: "buy"|"sell", price, size, reason: "size"|"ofi" }`.
-  - Constants `SIZE_MULTIPLE = 5`, `SIZE_WINDOW = 200`, `OFI_Z = 3`, `OFI_WINDOW = 50`.
+  - Constants `SIZE_MULTIPLE = 5`, `SIZE_WINDOW = 200`, `OFI_Z = 3`, `OFI_WINDOW = 50`. `flow` flags a step whose OFI is more than 3σ from the mean of the previous 50 steps.
 
 - [ ] **Step 1: Write the failing tests** `client/tests/metrics.test.js`. The expected values are hand-computed. For example, microprice = (100·100 + 101·300) / 400 = 100.75.
 
@@ -3193,7 +3877,7 @@ export const createDetector = () => {
 - [ ] **Step 4: Run tests to verify they pass.**
 
 Run: `cd client && npm test`
-Expected: `ℹ pass 31`, `ℹ fail 0`.
+Expected: `ℹ pass 37`, `ℹ fail 0`.
 
 - [ ] **Step 5: Commit.**
 
@@ -3217,13 +3901,13 @@ git add client/src/sim/metrics.js client/tests/metrics.test.js
 **Interfaces:**
 - Consumes: Tasks 11–12.
 - Produces:
-  - `createSession({ seed?, institutionalRate?, warmup? }) → { next() → Snapshot, inject(side), setRate(rate), current() → Snapshot }`.
+  - `createSession({ seed?, institutionalRate?, warmup? }) → { next() → Snapshot, inject(side), setRate(rate), current() → Snapshot }`. `warmup` steps run up front, which fills the charts and primes the detector.
   - `Snapshot = { time, price, changePct, microprice, ofi (rolling sum of the last 20 steps), vpin, bids, asks, alerts: Alert[] (newest first, ≤ MAX_ALERTS = 8), history: { price, microprice, ofi, vpin } (each ≤ HISTORY = 120 numbers) }`.
   - `fmt(value, digits = 2) → string`.
   - `useSimulation(session, intervalMs, running = true) → Snapshot`.
-  - `<TickerStrip />`.
+  - `<TickerStrip />`: the whole strip is a link to `/lab`, which Task 14 builds.
 
-The ticker lives in `SiteHeader`, which never unmounts. That makes it the single site-wide simulation the spec asks for, without a module-level singleton.
+The ticker lives in the always-mounted header, which no longer hides on scroll. That makes it the single site-wide simulation the spec asks for.
 
 - [ ] **Step 1: Write the failing tests** `client/tests/session.test.js`:
 
@@ -3365,29 +4049,29 @@ export const fmt = (value, digits = 2) =>
 - [ ] **Step 4: Run tests to verify they pass.**
 
 Run: `cd client && npm test`
-Expected: `ℹ pass 34`, `ℹ fail 0`.
+Expected: `ℹ pass 40`, `ℹ fail 0`.
 
-- [ ] **Step 5: Write the failing browser checks.** In `client/scripts/verify-redesign.mjs`, desktop pass, insert directly after the `check("hero offers three paths", ...)` line:
+- [ ] **Step 5: Write the failing browser checks.** In `client/scripts/verify-redesign.mjs`, desktop pass, insert directly after the `check("tagline doesn't retype on return", ...)` line:
 
 ```js
-  const tickerText = () => page.locator(".ticker__group").first().textContent();
-  const tickerStart = await tickerText();
+  const tickerStart = await text(page, ".ticker__group");
   await page.waitForTimeout(1600);
-  check("ticker updates", (await tickerText()) !== tickerStart);
-  check("ticker is labelled simulated", (tickerStart ?? "").includes("simulated"));
+  check("ticker updates", tickerStart !== "" && (await text(page, ".ticker__group")) !== tickerStart);
+  check("ticker is labelled simulated", tickerStart.includes("simulated"));
+  check("ticker links to the lab", (await page.locator('a.ticker[href$="/lab"]').count()) === 1);
   await page.evaluate(() => {
     Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true });
     document.dispatchEvent(new Event("visibilitychange"));
   });
   await page.waitForTimeout(600);
-  const hiddenText = await tickerText();
+  const hiddenText = await text(page, ".ticker__group");
   await page.waitForTimeout(1600);
-  check("ticker pauses while the tab is hidden", (await tickerText()) === hiddenText);
+  check("ticker pauses while the tab is hidden", hiddenText !== "" && (await text(page, ".ticker__group")) === hiddenText);
   await page.reload({ waitUntil: "networkidle" });
 ```
 
 - [ ] **Step 6: Run the verify procedure to see them fail.**
-Expected: the three ticker checks FAIL (no `.ticker__group`).
+Expected: the four ticker checks FAIL (no `.ticker__group` yet).
 
 - [ ] **Step 7: Create** `client/src/hooks/useSimulation.js`:
 
@@ -3431,6 +4115,7 @@ export const useSimulation = (session, intervalMs, running = true) => {
 
 ```jsx
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useReducedMotion } from "framer-motion";
 import { createSession } from "@/sim/session.js";
 import { fmt } from "@/sim/format.js";
@@ -3475,16 +4160,16 @@ export const TickerStrip = () => {
   const reduceMotion = useReducedMotion();
 
   return (
-    <div className="ticker" role="marquee" aria-label="Simulated market ticker">
-      <div className={`ticker__track${reduceMotion ? "" : " ticker__track--marquee"}`}>
+    <Link to="/lab" className="ticker" aria-label="Simulated market ticker: open the order-flow lab">
+      <div className={`ticker__track${reduceMotion ? "" : " ticker__track--marquee"}`} aria-hidden="true">
         <span className="ticker__group">
           <TickerItems snapshot={snapshot} />
         </span>
-        <span className="ticker__group ticker__group--copy" aria-hidden="true">
+        <span className="ticker__group ticker__group--copy">
           <TickerItems snapshot={snapshot} />
         </span>
       </div>
-    </div>
+    </Link>
   );
 };
 ```
@@ -3502,6 +4187,11 @@ and `client/src/components/navigation/tickerStrip.css`:
   font-family: var(--font-mono);
   font-size: 0.72rem;
   color: var(--text-2);
+}
+
+.ticker:hover,
+.ticker:focus-visible {
+  color: var(--text);
 }
 
 .ticker__track {
@@ -3557,10 +4247,10 @@ and `client/src/components/navigation/tickerStrip.css`:
 }
 ```
 
-- [ ] **Step 9: Mount it in the header.** In `client/src/components/navigation/SiteHeader.jsx`, add `import { TickerStrip } from "./TickerStrip.jsx";` and render `<TickerStrip />` as the first child of `<motion.header>`, before `<div className="site-header__container">`. In `client/src/styles/global.css`, change `--header-height: 3.25rem;` to `--header-height: 4.85rem;` (header plus the 1.6rem ticker).
+- [ ] **Step 9: Mount it in the header.** In `client/src/components/navigation/SiteHeader.jsx`, add `import { TickerStrip } from "./TickerStrip.jsx";` and render `<TickerStrip />` as the first child of `<header className="site-header">`, before `<div className="site-header__container">`. In `client/src/styles/global.css`, change `--header-height: 3.25rem;` to `--header-height: 4.85rem;` (the 3.25rem bar plus the 1.6rem ticker).
 
 - [ ] **Step 10: Run the verify procedure.**
-Expected: all checks pass, including the three ticker checks and the mobile overflow checks (the marquee stays inside `.ticker`'s `overflow: hidden`).
+Expected: every check passes, including the ticker checks and the mobile overflow checks (the marquee stays inside `.ticker`'s `overflow: hidden`). Check that `index-*.js` gzip is still ≤ 113.5 kB; the simulation is roughly 2 kB.
 
 - [ ] **Step 11: Commit.**
 
@@ -3583,13 +4273,13 @@ git add client/src client/tests/session.test.js client/scripts/verify-redesign.m
 - Modify: `client/scripts/verify-redesign.mjs`, `CLAUDE.md`, `client/index.html` (description)
 
 **Interfaces:**
-- Consumes: `createSession`, `fmt`, `useSimulation` (Task 13).
+- Consumes: `createSession`, `fmt`, `useSimulation` (Task 13); `ChunkErrorBoundary` (Task 10); `useDocumentTitle` (Task 5).
 - Produces:
   - `<Sparkline series={[{ values: number[], className }]} min? max? label />`.
   - `<Bars values={number[]} label />`.
   - `<OrderBookLadder bids asks />`.
   - `<LabPane />` (class `case-pane case-pane--lab`).
-  - The `/lab` route, lazy-loaded.
+  - The `/lab` route: lazy-loaded, with the seed in the URL (`/lab?seed=<0–4294967295>`).
 
 - [ ] **Step 1: Update the failing unit test.** In `client/tests/shell.test.js`, replace the `"lab is announced as coming soon until the playground ships"` test with:
 
@@ -3605,10 +4295,10 @@ Expected: FAIL. The actual output is `{ lines: ["lab: coming soon"] }`.
 - [ ] **Step 2: Make it pass.** In `client/src/shell/commands.js`, change the `lab` command's `run` to `run: () => opened("/lab", "Lab")`.
 
 Run: `cd client && npm test`
-Expected: `ℹ pass 34`, `ℹ fail 0`.
+Expected: `ℹ pass 40`, `ℹ fail 0`.
 
 - [ ] **Step 3: Write the failing browser checks.** In `client/scripts/verify-redesign.mjs`:
-- Change `check("nav has four numbered items", ... === 4)` to `check("nav has five numbered items", (await page.locator(".site-nav__link").count()) === 5);`.
+- Change the nav check to `check("nav has five numbered items", (await page.locator(".site-nav__key").count()) === 5);`.
 - After the `trading page ends with a hire CTA` check, insert:
 
 ```js
@@ -3619,36 +4309,54 @@ Insert directly before the `// --- Shell drawer ---` block:
 
 ```js
   // --- Lab ---
-  await page.goto(`${BASE}/lab`, { waitUntil: "networkidle" });
-  await page.waitForSelector(".lab__grid", { timeout: 5000 }).catch(() => {});
+  await page.goto(`${BASE}/lab?seed=42`, { waitUntil: "networkidle" });
+  await attempt(page.waitForSelector(".lab__grid"));
   check("lab renders", (await page.locator(".lab__grid").count()) === 1);
-  check("lab says the data is simulated", ((await page.locator(".page__eyebrow").textContent()) ?? "").includes("simulated"));
-  const labValue = () => page.locator(".lab__value").first().textContent();
-  const labStart = await labValue();
+  check("lab says the data is simulated", (await text(page, ".page__eyebrow")).includes("simulated"));
+  check("lab runs the seed from the URL", (await text(page, ".lab__seed")) === "seed 42");
+  check("lab labels its VPIN variant", (await page.locator('.pane__label:has-text("tick-rule variant")').count()) === 1);
+  const labStart = await text(page, ".lab__value");
   await page.waitForTimeout(1600);
-  check("lab metrics update", (await labValue()) !== labStart);
-  await page.focus(".lab__slider input");
+  check("lab metrics update", labStart !== "" && (await text(page, ".lab__value")) !== labStart);
+  await attempt(page.focus(".lab__slider input"));
   await page.keyboard.press("Home");
-  const newestAlert = () => document.querySelector(".lab__alerts li")?.textContent ?? "";
-  const alertBefore = await page.evaluate(newestAlert);
-  await page.click('button:has-text("inject large buy")');
-  const injected = await page
-    .waitForFunction(
+  const alertBefore = await text(page, ".lab__alerts li");
+  await attempt(page.click('button:has-text("inject large buy")'));
+  const injected = await attempt(
+    page.waitForFunction(
       (before) => {
-        const text = document.querySelector(".lab__alerts li")?.textContent ?? "";
-        return text !== before && text.includes("BUY");
+        const latest = document.querySelector(".lab__alerts li")?.textContent ?? "";
+        return latest !== before && latest.includes("BUY");
       },
       alertBefore,
       { timeout: 4000 }
     )
-    .then(() => true)
-    .catch(() => false);
+  );
   check("injected buy shows up in the alert log", injected);
+  await page.goto(`${BASE}/lab`, { waitUntil: "networkidle" });
+  await attempt(page.waitForURL(/[?&]seed=\d+/));
+  check("lab writes its seed into the URL", /[?&]seed=\d+/.test(page.url()));
+```
+
+After the stale-shell block (`await stale.close();`), insert:
+
+```js
+  // --- Stale tab after a redeploy: the lab chunk is gone ---
+  const staleLab = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  staleLab.setDefaultTimeout(5000);
+  await staleLab.route("**/LabPage-*.js", (route) => route.abort());
+  await staleLab.goto(`${BASE}/lab`, { waitUntil: "networkidle" });
+  await attempt(staleLab.waitForSelector('[role="alert"]'));
+  check(
+    "missing lab chunk shows a reload prompt and the header survives",
+    (await text(staleLab, '[role="alert"]')).includes("updated") && (await staleLab.locator(".site-header").count()) === 1
+  );
+  await staleLab.close();
 ```
 
 In the mobile overflow loop, add `"/lab"` to the route list.
 
-Run the verify procedure. Expected: the nav, trading-lab and all `lab` checks FAIL.
+Run the verify procedure. Expected: the nav, trading-lab and every lab check FAIL; the script still finishes and prints its summary.
 
 - [ ] **Step 4: Create** `client/src/components/lab/charts.jsx`:
 
@@ -3748,31 +4456,64 @@ export const OrderBookLadder = ({ bids, asks }) => {
 };
 ```
 
-- [ ] **Step 6: Create** `client/src/pages/LabPage.jsx`:
+- [ ] **Step 6: Create** `client/src/pages/LabPage.jsx`. The seed is read from `?seed=`. Anything that isn't an integer in range is replaced by a random seed, which is written back into the URL.
 
 ```jsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { PageIntro } from "@components/common/PageIntro.jsx";
 import { Sparkline, Bars } from "@components/lab/charts.jsx";
 import { OrderBookLadder } from "@components/lab/OrderBookLadder.jsx";
 import { createSession } from "@/sim/session.js";
 import { fmt } from "@/sim/format.js";
 import { useSimulation } from "@hooks/useSimulation.js";
+import { useDocumentTitle } from "@hooks/useDocumentTitle.js";
 import "./labPage.css";
 
 const DEFAULT_RATE = 0.03;
-const newSession = (rate) => createSession({ seed: Date.now() >>> 0, institutionalRate: rate, warmup: 60 });
+const MAX_SEED = 2 ** 32 - 1;
+const parseSeed = (value) => {
+  const seed = Number(value);
+  return value !== null && Number.isInteger(seed) && seed >= 0 && seed <= MAX_SEED ? seed : null;
+};
+const randomSeed = () => Math.floor(Math.random() * MAX_SEED);
+const newSession = (seed, rate) => createSession({ seed, institutionalRate: rate, warmup: 60 });
 
 export const LabPage = () => {
+  useDocumentTitle("Order-flow lab");
+  const [searchParams, setSearchParams] = useSearchParams();
   const [rate, setRate] = useState(DEFAULT_RATE);
-  const [session, setSession] = useState(() => newSession(DEFAULT_RATE));
+  const [seed, setSeed] = useState(() => parseSeed(searchParams.get("seed")) ?? randomSeed());
+  const [session, setSession] = useState(() => newSession(seed, DEFAULT_RATE));
   const [running, setRunning] = useState(true);
   const [fast, setFast] = useState(false);
+  const [copied, setCopied] = useState(false);
   const snapshot = useSimulation(session, fast ? 125 : 500, running);
+
+  // The seed lives in the URL, so a run can be shared: same seed, same simulated market (at default settings).
+  useEffect(() => {
+    if (searchParams.get("seed") !== String(seed)) setSearchParams({ seed: String(seed) }, { replace: true });
+  }, [seed, searchParams, setSearchParams]);
 
   const changeRate = (value) => {
     setRate(value);
     session.setRate(value);
+  };
+
+  const reset = () => {
+    const next = randomSeed();
+    setSeed(next);
+    setSession(newSession(next, rate));
+    setCopied(false);
+  };
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+    } catch {
+      setCopied(false);
+    }
   };
 
   return (
@@ -3807,8 +4548,12 @@ export const LabPage = () => {
         <button type="button" className="button" onClick={() => session.inject("sell")}>
           inject large sell
         </button>
-        <button type="button" className="button" onClick={() => setSession(newSession(rate))}>
+        <button type="button" className="button" onClick={reset}>
           reset
+        </button>
+        <span className="lab__seed">seed {seed}</span>
+        <button type="button" className="button" onClick={copyLink}>
+          {copied ? "link copied" : "copy link to this run"}
         </button>
       </div>
 
@@ -3850,7 +4595,7 @@ export const LabPage = () => {
         </section>
 
         <section className="pane">
-          <h2 className="pane__label">VPIN</h2>
+          <h2 className="pane__label">VPIN (tick-rule variant)</h2>
           <p className="lab__value">{fmt(snapshot.vpin)}</p>
           <Sparkline
             label="VPIN over time"
@@ -3859,8 +4604,9 @@ export const LabPage = () => {
             series={[{ values: snapshot.history.vpin, className: "lab__line--vpin" }]}
           />
           <p className="lab__explain">
-            VPIN measures how one-sided recent volume has been. Near 1 means one side dominates the flow, a typical sign
-            of informed or institutional trading.
+            VPIN measures how one-sided recent volume has been, over equal-volume buckets. This version signs trades
+            with the tick rule rather than bulk volume classification. Near 1 means one side dominates the flow, a
+            typical sign of informed or institutional trading.
           </p>
         </section>
 
@@ -3879,8 +4625,8 @@ export const LabPage = () => {
             <p>No alerts yet. Inject a large order to trigger one.</p>
           )}
           <p className="lab__explain">
-            Flags an order more than five times the recent median size, or an order-flow spike more than three standard
-            deviations from normal.
+            Flags an order more than five times the recent median size, or a step whose order-flow imbalance is more than
+            three standard deviations from its recent mean.
           </p>
         </section>
       </div>
@@ -3911,6 +4657,12 @@ and `client/src/pages/labPage.css`:
 
 .lab__slider input {
   accent-color: var(--amber);
+}
+
+.lab__seed {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--dim);
 }
 
 .lab__grid {
@@ -4020,32 +4772,37 @@ and `client/src/pages/labPage.css`:
 }
 ```
 
-- [ ] **Step 7: Lazy route.** In `client/src/router.jsx`, add `import { lazy, Suspense } from "react";` and, below the imports:
+- [ ] **Step 7: Lazy route behind the error boundary.** In `client/src/router.jsx`, add:
 
 ```jsx
+import { lazy, Suspense } from "react";
+import { ChunkErrorBoundary } from "@components/common/ChunkErrorBoundary.jsx";
+
 const LabPage = lazy(() => import("@pages/LabPage.jsx").then((module) => ({ default: module.LabPage })));
 ```
 
-Add after the `/case-studies/:slug` route:
+and after the `/case-studies/:slug` route:
 
 ```jsx
     <Route
       path="/lab"
       element={
-        <Suspense fallback={<div className="page">loading lab…</div>}>
-          <LabPage />
-        </Suspense>
+        <ChunkErrorBoundary>
+          <Suspense fallback={<div className="page">loading lab…</div>}>
+            <LabPage />
+          </Suspense>
+        </ChunkErrorBoundary>
       }
     />
 ```
 
-- [ ] **Step 8: Nav item.** Append to `NAV_ITEMS` in `client/src/data/navigation.js`:
+- [ ] **Step 8: Nav item.** Append to `NAV_ITEMS` in `client/src/data/navigation.js` (with a comma after the previous item):
 
 ```js
   { path: "/lab", key: "5", label: "lab" }
 ```
 
-(Add a comma after the previous item.)
+The number-key handler from Task 10 picks up `5` automatically.
 
 - [ ] **Step 9: Lab pane on /trading and home.** Create `client/src/components/caseStudies/LabPane.jsx`:
 
@@ -4072,23 +4829,29 @@ In `client/src/pages/TradingPage.jsx` and `client/src/components/sections/Tradin
 - render `<LabPane />` as the last child of `.case-grid`.
 
 - [ ] **Step 10: Run the verify procedure.**
-Expected: all checks pass. Confirm the build lists a separate `LabPage-*.js` chunk and that `index-*.js` gzip is ≤ 113.5 kB.
+Expected: every check passes. Confirm the build lists a separate `LabPage-*.js` chunk, and that `index-*.js` gzip is ≤ 113.5 kB.
 
-- [ ] **Step 11: Docs and metadata.** In `client/index.html`, change the description's ending `case studies, projects and ways to work together.` to `case studies, projects and a live order-flow playground.`. In `CLAUDE.md`, change the Routes bullet to include `/lab` (lazy-loaded), and add:
+- [ ] **Step 11: Docs and metadata.** In `client/index.html`, change the description's ending `case studies, projects and ways to work together.` to `case studies, projects and a live order-flow playground.`. In `CLAUDE.md`:
+- change the Routes bullet to include `/lab` (lazy-loaded behind `ChunkErrorBoundary`, seed in `?seed=`);
+- add:
 
 ```markdown
-- **Simulation**: `src/sim/` — seeded order-book simulation (`market.js`), OFI / microprice / VPIN / large-order detector (`metrics.js`), and `session.js`, which turns steps into render-ready snapshots. `useSimulation` steps a session on an interval and pauses while the tab is hidden. `TickerStrip` (inside `SiteHeader`) and the lazy `/lab` page each own one session. Everything simulated is labelled as such.
+- **Simulation**: `src/sim/`.
+  - `market.js` is the seeded order-book simulation. `metrics.js` has OFI, microprice, VPIN (tick-rule variant) and the large-order detector. `session.js` turns steps into render-ready snapshots, with optional warm-up.
+  - `useSimulation` steps a session on an interval and pauses while the tab is hidden.
+  - `TickerStrip` (inside `SiteHeader`, linking to `/lab`) and the lazy `/lab` page each own one session.
+  - Everything simulated is labelled as such. Never add accuracy or hit-rate counters: they read as performance claims.
 ```
 
 - [ ] **Step 12: Commit.**
 
 ```bash
 git add client/src client/tests/shell.test.js client/scripts/verify-redesign.mjs client/index.html CLAUDE.md
-# commit subject: "Add the order-flow playground at /lab"
+# commit subject: "Add the shareable order-flow playground at /lab"
 ```
 
 - [ ] **Step 13: Final checks and STOP.**
 - Run the verify procedure once more.
 - Re-run the Lighthouse command from Task 8 Step 4.
-- Send Pravesh lab screenshots (desktop and mobile), the bundle sizes (`index`, `ShellDrawer`, `LabPage` chunks) and the Lighthouse score.
+- Send Pravesh lab screenshots (desktop and mobile), a shareable `/lab?seed=…` link from the preview, the bundle sizes (`index`, `ShellDrawer`, `LabPage` chunks) and the Lighthouse score.
 - Ask whether to push phase 3. Do not push without a yes.

@@ -1,7 +1,7 @@
 # Terminal Portfolio — Design Spec
 
 **Date:** 2026-10-11
-**Status:** Approved by Pravesh section by section (brainstorming session); pending review of this written spec
+**Status:** Approved by Pravesh; revised 2026-10-11 after an independent review (see "Revisions after review")
 **Branch:** `quant-projects-upwork` (builds on that branch's project reorder + Upwork links)
 
 ## Goal
@@ -53,16 +53,16 @@ Existing redirects (`/about`, `/experience`, `/skills`, `/achievements`, `/conta
 
 ### Navigation
 
-`[1] hire` → `/work-with-me` · `[2] trading` → `/trading` · `[3] resume` → `/#experience` · `[4] projects` → `/projects` · `[5] lab` → `/lab`.
+`[1] hire` → `/work-with-me` · `[2] trading` → `/trading` · `[3] experience` → `/#experience` · `[4] projects` → `/projects` · `[5] lab` → `/lab`.
 
-Before phase 3 ships, `[5] lab` is omitted. The header keeps the `Resume` (PDF) button. Mobile collapses the nav into a single `[≡] menu` toggle.
+Before phase 3 ships, `[5] lab` is omitted. The header keeps a `cv.pdf` button; the mobile menu and the experience section also link the PDF, so phones never lose it. Mobile collapses the nav into a single `[≡] menu` toggle. The header stays on screen while scrolling (terminals don't hide their chrome).
 
 ### Hero
 
-- Tag line (mono, dim): `> sde @ amazon alexa ai · quant dev`, typed out once on first load (instant under reduced motion).
+- Tag line (mono, dim): `> pravesh pandey · sde @ amazon alexa ai · quant dev`, typed out once per visit (instant on later returns and under reduced motion).
 - Headline: "Backend systems at Amazon scale." / "Trading systems at market speed." (second line in green).
 - Sub-line (Inter): "I design, build and ship software that has to be fast and correct, for clients, teams and markets."
-- Three path panes: **Hire me →** (projects & Upwork, `/work-with-me`), **Trading systems →** (order flow, backtesting, `/trading`), **Résumé →** (experience & CV, `/#experience`). On mobile they render as command chips.
+- Three path panes: **Hire me →** (projects & Upwork, `/work-with-me`), **Trading systems →** (order flow, backtesting, `/trading`), **Experience →** (track record & CV, `/#experience`). On mobile they render as command chips.
 - Blinking block cursor after the headline (static under reduced motion).
 
 ### Numbers policy
@@ -166,7 +166,8 @@ The drawer is loaded with `React.lazy` on first open; nothing shell-related is i
 - `limitations` — honest limits and next steps
 - `stack` — chip list
 - `codeLink` (optional; LocalCache only) or "Code available on request" text for private repos
-- CTA at the end of every case study: "Need something like this? → hire" and "Ask for a walkthrough" (→ `/work-with-me`)
+- `decisions` — 2–4 rows of decision / chosen / rejected-and-why, rendered as a "Decision log" table (stacked on phones)
+- CTA at the end of every case study: "Need something like this? → hire" (→ `/work-with-me`) and "Ask for a walkthrough" (opens an email with the project in the subject)
 
 ### Entries
 
@@ -201,12 +202,13 @@ Every project gets a stable `slug` field in `profile.js` in phase 1 (e.g. `flowp
   - **OFI** — top-of-book order-flow imbalance (Cont–Kukanov–Stoikov definition), per step and rolling sum.
   - **Microprice** — `(bid·askSize + ask·bidSize) / (bidSize + askSize)`.
   - **VPIN** — fixed-volume buckets, buy/sell split by tick rule, rolling mean of |buy − sell| / bucket volume; always in [0, 1].
-  - **Detector** — flags an order when its size exceeds 5 × the rolling median order size (last 200 orders), or when the rolling-OFI z-score exceeds 3; both thresholds are named constants. Emits `{ time, side, price, size, reason }`.
+  - **Detector** — flags an order when its size exceeds 5 × the rolling median order size (last 200 orders), or a step whose OFI is more than 3 standard deviations from its 50-step mean; both thresholds are named constants. Emits `{ time, side, price, size, reason }`.
+  - The lab labels VPIN as a "tick-rule variant", since canonical VPIN uses bulk volume classification.
 - Instrument label is `SIM·NIFTY`; every surface showing simulated data says "simulated".
 
 ### Ticker strip
 
-- One shared simulation instance for the app (module-level singleton with subscribe/unsubscribe), stepping about every 500 ms.
+- One site-wide simulation instance, owned by the ticker inside the always-mounted header, stepping about every 500 ms. The whole strip links to `/lab`.
 - Pauses when `document.visibilityState` is hidden.
 - Shows price and % change, OFI, microprice, VPIN, latest alert. Static (no marquee) under reduced motion.
 
@@ -247,3 +249,26 @@ Extend `client/scripts/verify-redesign.mjs` (Playwright, existing dev dependency
 ### Housekeeping
 
 Update the repo `CLAUDE.md` architecture section (it still describes the Three.js background and old routes).
+
+## Revisions after review (2026-10-11)
+
+An independent review (Fable 5.1) of this spec and the plan led to these additions; Pravesh chose the four creative items.
+
+**Fixes**
+- Lazy chunks (shell drawer, `/lab`) are wrapped in an error boundary that offers a reload, so a tab opened before a redeploy never goes blank.
+- The shell's `Tab` key only completes when there is input; otherwise it moves focus (no keyboard trap).
+- The open drawer pads the page by its own height (`body[data-shell]` → `--shell-height`), so nothing behind it becomes unreachable.
+- A drawer restored from an earlier visit does not take focus on page load; only a visitor's own open does.
+- Single-key shortcuts (`` ` `` and 1–5) can be switched off with `shortcuts off` (WCAG 2.1.4).
+- Per-route document titles (`<title> · Pravesh Pandey`); site-wide Open Graph tags in `index.html` (link-preview crawlers don't run JavaScript).
+- Mobile viewport uses `viewport-fit=cover, interactive-widget=resizes-content`; the status bar and drawer respect `env(safe-area-inset-bottom)`.
+- Falling values use amber, since red is reserved for alerts.
+- Simulation sessions can warm up (60 steps) so charts start full and the detector catches an immediate injection; large orders move the simulated price.
+- Browser checks treat missing elements as failures instead of hanging.
+
+**Creative additions**
+- `/trading` gains a "What I don't publish, and why" pane: no P&L or win rates (easy to overfit, impossible to verify on a web page), no live-trading claims, no strategy parameters; walkthrough on request.
+- Each case study gains a decision log (see Section 4).
+- Shell: number keys `1`–`5` follow the menu; `cat <project>` prints a summary in place; `man <command>`; hidden `sudo hire`; `open <project>` without a case study scrolls to that card on `/projects`.
+- Lab runs are shareable: the seed is in the URL (`/lab?seed=42`) with a "copy link to this run" button; the ticker opens the lab.
+
