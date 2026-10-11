@@ -15,6 +15,9 @@ const tickerPlaceholder = <div className="ticker" aria-hidden="true" />;
 
 const cls = (...classes) => classes.filter(Boolean).join(" ");
 
+// index.html applies the saved theme before first paint; the toggle only flips it and saves the choice.
+const THEME_KEY = "pp-theme";
+
 // A terminal keeps its chrome on screen, so the header no longer hides on scroll.
 export const SiteHeader = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,6 +26,17 @@ export const SiteHeader = () => {
   const reduceMotion = useReducedMotion();
   const resumeHref = `${import.meta.env.BASE_URL}resume.pdf`;
   const closeMenu = () => setIsOpen(false);
+  const [theme, setTheme] = useState(() => (document.documentElement.dataset.theme === "light" ? "light" : "dark"));
+  const nextTheme = theme === "light" ? "dark" : "light";
+  const toggleTheme = () => {
+    document.documentElement.dataset.theme = nextTheme;
+    try {
+      window.localStorage.setItem(THEME_KEY, nextTheme);
+    } catch {
+      // Storage unavailable: the choice lasts for this page view.
+    }
+    setTheme(nextTheme);
+  };
 
   // Paths starting with "#" are home-page sections; everything else is a route.
   const goTo = (path) => {
@@ -96,6 +110,15 @@ export const SiteHeader = () => {
         </nav>
 
         <div className="site-header__actions">
+          <button
+            className="theme-toggle"
+            type="button"
+            aria-label={`Switch to ${nextTheme} theme`}
+            title={`Switch to ${nextTheme} theme`}
+            onClick={toggleTheme}
+          >
+            <span aria-hidden="true">{theme === "light" ? "☾" : "☀"}</span>
+          </button>
           <a className="button button--ghost" href={resumeHref} target="_blank" rel="noreferrer">
             cv.pdf
           </a>

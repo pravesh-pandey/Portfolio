@@ -59,6 +59,23 @@ const run = async () => {
   check("social links are real", (await page.locator('.social-links a[href="#"]').count()) === 0);
   check("nav has five numbered items", (await page.locator(".site-nav__key").count()) === 5);
   check("nav labels are terminal-style", (await text(page, ".site-nav__link")).includes("[1]"));
+  // Theme: dark by default, the header toggle switches to light, and the choice survives a reload.
+  const bodyBg = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  const themeAttr = () => page.evaluate(() => document.documentElement.dataset.theme ?? "");
+  check("dark theme by default", (await themeAttr()) !== "light" && (await bodyBg()) === "rgb(11, 13, 12)");
+  await attempt(page.click(".theme-toggle"));
+  check("toggle switches to the light theme", (await themeAttr()) === "light" && (await bodyBg()) === "rgb(245, 244, 238)");
+  check("toggle names the theme it switches to", (await page.locator(".theme-toggle").getAttribute("aria-label").catch(() => "")) === "Switch to dark theme");
+  await page.reload({ waitUntil: "networkidle" });
+  check("light theme survives a reload", (await themeAttr()) === "light");
+  const noScripts = await browser.newPage();
+  await noScripts.addInitScript(() => window.localStorage.setItem("pp-theme", "light"));
+  await noScripts.route("**/*.js", (route) => route.abort());
+  await noScripts.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
+  check("saved theme applies before the app loads (no flash)", (await noScripts.evaluate(() => document.documentElement.dataset.theme ?? "")) === "light");
+  await noScripts.close();
+  await attempt(page.click(".theme-toggle"));
+  check("toggle switches back to dark", (await themeAttr()) === "dark" && (await bodyBg()) === "rgb(11, 13, 12)");
   const basePath = new URL(BASE).pathname.replace(/\/$/, "");
   check(
     "nav links include the site base path",
@@ -249,6 +266,12 @@ const run = async () => {
     (await blocked.locator("#shell").count()) === 1 && blockedErrors.length === 0,
     blockedErrors.join(" | ").slice(0, 300)
   );
+  await attempt(blocked.click(".theme-toggle"));
+  check(
+    "theme toggle works with storage blocked",
+    (await blocked.evaluate(() => document.documentElement.dataset.theme ?? "")) === "light" && blockedErrors.length === 0,
+    blockedErrors.join(" | ").slice(0, 300)
+  );
   await blocked.close();
 
   // --- Stale tab after a redeploy: the shell chunk is gone ---
@@ -302,6 +325,7 @@ const run = async () => {
   check("reduced motion shows the full tagline at once", (await text(mobile, '.hero__tag [aria-hidden="true"]')) === TAGLINE);
   const metricText = (await mobile.locator(".impact__metric dt").first().textContent()) ?? "";
   check("reduced-motion counters show final value", !metricText.trim().startsWith("0%") && metricText.trim() !== "0");
+  check("theme toggle is visible on mobile", await mobile.locator(".theme-toggle").isVisible());
   await attempt(mobile.click(".site-header__toggle"));
   check("mobile menu offers the PDF", await mobile.locator('.site-nav__pdf a[href$="resume.pdf"]').isVisible());
   await attempt(mobile.click(".site-header__scrim"));

@@ -24,6 +24,14 @@
       rel="stylesheet"
     />
     <title>Pravesh Pandey — Backend & Trading Systems Engineer</title>
+    <script>
+      // Apply the saved theme before first paint, so a light-theme visitor never sees a dark flash.
+      try {
+        if (localStorage.getItem("pp-theme") === "light") document.documentElement.dataset.theme = "light";
+      } catch {
+        // Storage blocked: stay on the default dark theme.
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -109,11 +109,11 @@
 }
 
 .ladder__row--bid td:first-child {
-  background: linear-gradient(to left, rgba(61, 220, 132, 0.18) var(--depth), transparent var(--depth));
+  background: linear-gradient(to left, rgba(var(--accent-2-rgb), 0.18) var(--depth), transparent var(--depth));
 }
 
 .ladder__row--ask td:last-child {
-  background: linear-gradient(to right, rgba(255, 176, 0, 0.16) var(--depth), transparent var(--depth));
+  background: linear-gradient(to right, rgba(var(--accent-rgb), 0.16) var(--depth), transparent var(--depth));
 }
 
 .lab__alerts ol {

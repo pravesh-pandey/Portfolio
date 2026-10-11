@@ -45,7 +45,7 @@ This is a monorepo with a `client/` (React SPA) and `server/` (Express API).
 
 - **Framework**: React 18 + Vite, with React Router v6 for routing.
 - **Key libraries**: Framer Motion (short reveals and drawer motion). No Three.js and no Lenis; avoid adding runtime dependencies.
-- **Look**: dark trading-terminal theme. Color, font and radius tokens live on `:root` in `src/styles/global.css`; older names (`--accent*`, `--surface*`, `--card`, `--text-dim`, `--font-body`, `--font-display`) alias the new tokens. JetBrains Mono for UI, headings and data; Inter for paragraphs. Red is for alerts only.
+- **Look**: dark trading-terminal theme. Color, font and radius tokens live on `:root` in `src/styles/global.css`; older names (`--accent*`, `--surface*`, `--card`, `--text-dim`, `--font-body`, `--font-display`) alias the new tokens. JetBrains Mono for UI, headings and data; Inter for paragraphs. Red is for alerts only. A light theme overrides the same tokens under `:root[data-theme="light"]`: the header toggle sets `data-theme` and saves it as `pp-theme` in `localStorage`, and an inline script in `index.html` applies it before first paint. Dark is the default. Keep new colours as tokens in both blocks.
 - **Path aliases**: `@`, `@components`, `@pages`, `@styles`, `@data`, `@layout`, `@hooks` — all resolve under `src/`. Pure modules imported by unit tests (`src/data/*`, `src/shell/commands.js`, `src/shell/hotkey.js`, `src/sim/*`) use relative imports only, because `node --test` doesn't resolve the aliases.
 - **Layout**: `AppLayout` wraps every page with `SiteHeader`, `SiteFooter` and `ShellHost` (the fixed bottom status bar with the `>_ Shell` button).
 - **Shell**: `src/shell/`.

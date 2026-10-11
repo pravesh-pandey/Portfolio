@@ -10,6 +10,8 @@
   --amber: #ffb000;
   --green: #3ddc84;
   --red: #ff6b5b;
+  --header-bg: rgba(11, 13, 12, 0.94);
+  --shell-bg: #070908;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --radius: 6px;
@@ -34,6 +36,25 @@
   --corner-xl: var(--radius);
   --corner-lg: var(--radius);
   --corner-md: var(--radius);
+}
+
+/* Light theme: same terminal layout on paper. Every text colour keeps WCAG AA (≥ 4.5:1) on bg and panes. */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f5f4ee;
+  --pane: #ffffff;
+  --pane-2: #faf9f5;
+  --border: #d5d9d0;
+  --text: #141a17;
+  --text-2: #3b4842;
+  --dim: #5c6b63;
+  --amber: #8a5700;
+  --green: #0a7a3a;
+  --red: #b8322a;
+  --header-bg: rgba(245, 244, 238, 0.94);
+  --shell-bg: #ffffff;
+  --accent-rgb: 138, 87, 0;
+  --accent-2-rgb: 10, 122, 58;
 }
 
 *,

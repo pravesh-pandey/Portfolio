@@ -20,7 +20,7 @@ body[data-shell="max"] {
   display: flex;
   flex-direction: column;
   height: var(--shell-height, 40vh);
-  background: #070908;
+  background: var(--shell-bg);
   border-top: 2px solid var(--green);
   font-family: var(--font-mono);
   font-size: 0.85rem;
