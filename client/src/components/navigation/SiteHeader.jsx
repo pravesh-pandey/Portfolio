@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from "react";
-import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useReducedMotion } from "framer-motion";
 import { NAV_ITEMS } from "@data/navigation.js";
 import { navShortcut } from "@/shell/hotkey.js";
@@ -69,17 +69,22 @@ export const SiteHeader = () => {
           <ul className="site-nav__list">
             {NAV_ITEMS.map((item) => (
               <li key={item.path}>
-                <a
-                  href={item.path}
+                {/* Real router links, so the base path is in the href and middle/Ctrl-click work. */}
+                <Link
+                  to={item.path.startsWith("#") ? { pathname: "/", hash: item.path } : item.path}
                   className="site-nav__link"
                   aria-current={location.pathname === item.path ? "page" : undefined}
                   onClick={(event) => {
-                    event.preventDefault();
-                    goTo(item.path);
+                    closeMenu();
+                    // Already on this section: navigating would be a no-op, so scroll instead.
+                    if (item.path.startsWith("#") && location.pathname === "/" && location.hash === item.path) {
+                      event.preventDefault();
+                      goTo(item.path);
+                    }
                   }}
                 >
                   <span className="site-nav__key">[{item.key}]</span> {item.label}
-                </a>
+                </Link>
               </li>
             ))}
             <li className="site-nav__pdf">

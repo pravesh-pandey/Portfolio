@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useReducedMotion } from "framer-motion";
 import { createSession } from "@/sim/session.js";
-import { fmt } from "@/sim/format.js";
+import { describeAlert, fmt } from "@/sim/format.js";
 import { useSimulation } from "@hooks/useSimulation.js";
 
 const TickerItems = ({ snapshot }) => {
@@ -28,9 +28,7 @@ const TickerItems = ({ snapshot }) => {
       <span>μP {fmt(snapshot.microprice)}</span>
       <span>VPIN {fmt(snapshot.vpin)}</span>
       {alert && (
-        <span className="ticker__alert">
-          ● large {alert.side} @ {fmt(alert.price)}
-        </span>
+        <span className="ticker__alert">● {describeAlert(alert)}</span>
       )}
       <span className="ticker__note">simulated data</span>
     </>

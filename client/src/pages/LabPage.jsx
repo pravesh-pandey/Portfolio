@@ -92,7 +92,7 @@ export const LabPage = () => {
         </button>
         <span className="lab__seed">seed {seed}</span>
         <button type="button" className="button" onClick={copyLink}>
-          {copied ? "link copied" : "copy link to this run"}
+          {copied ? "link copied" : "copy link to this seed"}
         </button>
       </div>
 

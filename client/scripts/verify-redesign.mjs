@@ -59,6 +59,11 @@ const run = async () => {
   check("social links are real", (await page.locator('.social-links a[href="#"]').count()) === 0);
   check("nav has five numbered items", (await page.locator(".site-nav__key").count()) === 5);
   check("nav labels are terminal-style", (await text(page, ".site-nav__link")).includes("[1]"));
+  const basePath = new URL(BASE).pathname.replace(/\/$/, "");
+  check(
+    "nav links include the site base path",
+    (await page.locator('.site-nav__link:has-text("trading")').getAttribute("href")) === `${basePath}/trading`
+  );
   check("status bar shows copyright", (await text(page, ".status-bar")).includes("Pravesh Pandey"));
   check("footer links Upwork", (await page.locator('.site-footer a[href*="upwork.com"]').count()) === 1);
   await page.mouse.wheel(0, 1500);
@@ -140,6 +145,7 @@ const run = async () => {
   check("lab renders", (await page.locator(".lab__grid").count()) === 1);
   check("lab says the data is simulated", (await text(page, ".page__eyebrow")).includes("simulated"));
   check("lab runs the seed from the URL", (await text(page, ".lab__seed")) === "seed 42");
+  check("lab share button promises only the seed", (await page.locator('button:has-text("copy link to this seed")').count()) === 1);
   check("lab labels its VPIN variant", (await page.locator('.pane__label:has-text("tick-rule variant")').count()) === 1);
   const labStart = await text(page, ".lab__value");
   await page.waitForTimeout(1600);
@@ -185,6 +191,10 @@ const run = async () => {
   await page.keyboard.press("Escape");
   check("Esc closes the shell", (await page.locator("#shell").count()) === 0);
   check("focus returns to the shell button", await isActive("status-bar__shell"));
+  await attempt(page.click(".status-bar__shell"));
+  await attempt(page.focus('.shell__actions button:has-text("maximize")'));
+  await page.keyboard.press("Escape");
+  check("Esc closes the shell from its buttons too", (await page.locator("#shell").count()) === 0);
   await page.keyboard.press("`");
   await attempt(page.waitForSelector("#shell"));
   check("backtick opens the shell", (await page.locator("#shell").count()) === 1);

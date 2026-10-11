@@ -46,9 +46,6 @@ const ShellDrawer = ({ inputRef, autoFocus, maximized, onToggleMaximize, onClose
     if (event.key === "Enter") {
       event.preventDefault();
       execute(input);
-    } else if (event.key === "Escape") {
-      event.preventDefault();
-      onClose();
     } else if (event.key === "Tab" && !event.shiftKey && input.trim()) {
       // Only completes when there's something to complete; otherwise Tab moves focus as usual (no keyboard trap).
       event.preventDefault();
@@ -69,7 +66,19 @@ const ShellDrawer = ({ inputRef, autoFocus, maximized, onToggleMaximize, onClose
   };
 
   return (
-    <section id="shell" ref={sectionRef} tabIndex={-1} className="shell" aria-label="Shell">
+    <section
+      id="shell"
+      ref={sectionRef}
+      tabIndex={-1}
+      className="shell"
+      aria-label="Shell"
+      onKeyDown={(event) => {
+        // Esc closes from anywhere in the drawer: the prompt, the window buttons or a chip.
+        if (event.key !== "Escape") return;
+        event.preventDefault();
+        onClose();
+      }}
+    >
       <header className="shell__bar">
         <span>pravesh@desk:~</span>
         <span className="shell__actions">

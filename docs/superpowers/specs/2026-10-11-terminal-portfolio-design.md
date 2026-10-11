@@ -270,5 +270,5 @@ An independent review (Fable 5.1) of this spec and the plan led to these additio
 - `/trading` gains a "What I don't publish, and why" pane: no P&L or win rates (easy to overfit, impossible to verify on a web page), no live-trading claims, no strategy parameters; walkthrough on request.
 - Each case study gains a decision log (see Section 4).
 - Shell: number keys `1`–`5` follow the menu; `cat <project>` prints a summary in place; `man <command>`; hidden `sudo hire`; `open <project>` without a case study scrolls to that card on `/projects`.
-- Lab runs are shareable: the seed is in the URL (`/lab?seed=42`) with a "copy link to this run" button; the ticker opens the lab.
+- Lab runs are shareable: the seed is in the URL (`/lab?seed=42`) with a "copy link to this seed" button (the link carries the seed only, so it reproduces the market at default settings, not later injections); the ticker opens the lab.
 
