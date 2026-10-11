@@ -2,12 +2,16 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { HomePage } from "@pages/HomePage.jsx";
 import { ProjectsPage } from "@pages/ProjectsPage.jsx";
 import { WorkWithMePage } from "@pages/WorkWithMePage.jsx";
+import { TradingPage } from "@pages/TradingPage.jsx";
+import { CaseStudyPage } from "@pages/CaseStudyPage.jsx";
 import { NotFoundPage } from "@pages/NotFoundPage.jsx";
 
 export const AppRoutes = () => (
   <Routes>
     <Route path="/" element={<HomePage />} />
     <Route path="/projects" element={<ProjectsPage />} />
+    <Route path="/trading" element={<TradingPage />} />
+    <Route path="/case-studies/:slug" element={<CaseStudyPage />} />
     <Route path="/work-with-me" element={<WorkWithMePage />} />
     <Route path="/about" element={<Navigate to="/#about" replace />} />
     <Route path="/experience" element={<Navigate to="/#experience" replace />} />

@@ -71,6 +71,27 @@ const run = async () => {
     check(`redirect ${from} → /work-with-me`, page.url().includes("/work-with-me"));
   }
 
+  await page.goto(`${BASE}/trading`, { waitUntil: "networkidle" });
+  check("trading page lists two case studies", (await page.locator(".case-pane--study").count()) === 2);
+  check("trading page explains what isn't published", (await page.locator(".not-published li").count()) === 3);
+  check("trading page ends with a hire CTA", (await page.locator(".hire-cta").count()) === 1);
+  for (const slug of ["flowpulse", "options-backtester", "localcache"]) {
+    await page.goto(`${BASE}/case-studies/${slug}`, { waitUntil: "networkidle" });
+    check(
+      `case study ${slug} renders`,
+      (await page.locator(".pipeline__stage").count()) >= 3 &&
+        (await page.locator(".decision-table tbody tr").count()) >= 2 &&
+        (await page.locator(".hire-cta").count()) === 1
+    );
+  }
+  check("case study sets the tab title", (await page.title()).startsWith("LocalCache · "));
+  await page.goto(`${BASE}/case-studies/does-not-exist`, { waitUntil: "networkidle" });
+  check("unknown case study shows 404", (await text(page, "h1")).includes("404"));
+  await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
+  await attempt(page.click('.site-nav__link:has-text("trading")'));
+  await attempt(page.waitForURL("**/trading"));
+  check("nav [2] trading opens /trading", page.url().endsWith("/trading"));
+
   await page.goto(`${BASE}/projects`, { waitUntil: "networkidle" });
   check("projects page shows 12 cards", (await page.locator(".project-card").count()) === 12);
 

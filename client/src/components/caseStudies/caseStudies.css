@@ -1,0 +1,196 @@
+.case-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 1rem;
+}
+
+.case-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.case-pane__title {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.case-pane__summary {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.case-pane__link {
+  margin-top: auto;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--green);
+}
+
+.case-pane--lab {
+  border-style: dashed;
+}
+
+.case-study__sections {
+  display: grid;
+  gap: 1rem;
+  max-width: 900px;
+}
+
+.case-study__sections p:last-child {
+  margin-bottom: 0;
+}
+
+.case-study__sections li + li {
+  margin-top: 0.4rem;
+}
+
+.case-study__code {
+  margin: 1rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+
+.case-study__code a {
+  color: var(--green);
+}
+
+.pipeline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.2rem;
+}
+
+.pipeline__stage {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pipeline__stage:not(:last-child)::after {
+  content: "→";
+  color: var(--amber);
+}
+
+.pipeline__box {
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.decision-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.decision-table th,
+.decision-table td {
+  padding: 0.55rem 0.6rem;
+  border-top: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+  color: var(--text-2);
+}
+
+.decision-table thead th {
+  border-top: none;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.decision-table tbody th {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  color: var(--text);
+}
+
+.decision-table td:nth-child(2) {
+  color: var(--green);
+}
+
+.not-published {
+  margin-top: 1rem;
+}
+
+.not-published ul {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.not-published p:last-child {
+  margin: 1rem 0 0;
+}
+
+.hire-cta__title {
+  margin: 0 0 1rem;
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+.hire-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.trading-page .hire-cta {
+  margin-top: 1rem;
+}
+
+@media (max-width: 640px) {
+  .decision-table thead {
+    display: none;
+  }
+
+  .decision-table tr,
+  .decision-table th,
+  .decision-table td {
+    display: block;
+  }
+
+  .decision-table tbody th {
+    padding-top: 0.8rem;
+  }
+
+  .decision-table td {
+    border-top: none;
+    padding-top: 0.2rem;
+  }
+
+  .decision-table td::before {
+    content: attr(data-label) ": ";
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--dim);
+  }
+
+  .pipeline {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pipeline__stage {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pipeline__stage:not(:last-child)::after {
+    content: "↓";
+    padding-left: 0.8rem;
+  }
+}
