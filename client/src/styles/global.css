@@ -14,7 +14,7 @@
   --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --radius: 6px;
   --max-width: 1200px;
-  --header-height: 3.25rem;
+  --header-height: 4.85rem;
   --status-bar-height: 2rem;
 
   /* Older component styles still use these names; they map onto the terminal tokens. */

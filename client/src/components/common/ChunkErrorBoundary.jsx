@@ -11,6 +11,7 @@ export class ChunkErrorBoundary extends Component {
 
   render() {
     if (!this.state.failed) return this.props.children;
+    if (this.props.fallback !== undefined) return this.props.fallback;
     return (
       <div className={this.props.className ?? "page"} role="alert">
         <p>This part of the site was just updated.</p>

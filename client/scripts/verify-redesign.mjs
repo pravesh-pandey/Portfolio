@@ -37,6 +37,20 @@ const run = async () => {
   await attempt(page.click('.site-nav__link:has-text("trading")'));
   await attempt(page.click(".site-header__logo"));
   check("tagline doesn't retype on return", (await text(page, '.hero__tag [aria-hidden="true"]')) === TAGLINE);
+  const tickerStart = await text(page, ".ticker__group");
+  await page.waitForTimeout(1600);
+  check("ticker updates", tickerStart !== "" && (await text(page, ".ticker__group")) !== tickerStart);
+  check("ticker is labelled simulated", tickerStart.includes("simulated"));
+  check("ticker links to the lab", (await page.locator('a.ticker[href$="/lab"]').count()) === 1);
+  await page.evaluate(() => {
+    Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true });
+    document.dispatchEvent(new Event("visibilitychange"));
+  });
+  await page.waitForTimeout(600);
+  const hiddenText = await text(page, ".ticker__group");
+  await page.waitForTimeout(1600);
+  check("ticker pauses while the tab is hidden", hiddenText !== "" && (await text(page, ".ticker__group")) === hiddenText);
+  await page.reload({ waitUntil: "networkidle" });
   check("experience section links the PDF", (await page.locator('#experience a[href$="resume.pdf"]').count()) === 1);
 
   for (const id of ["trading", "impact", "about", "experience", "projects", "skills", "awards", "contact"]) {
@@ -209,6 +223,19 @@ const run = async () => {
     (await text(stale, '[role="alert"]')).includes("updated") && (await stale.locator(".hero__title").count()) === 1
   );
   await stale.close();
+
+  // --- Stale tab after a redeploy: the ticker chunk is gone ---
+  const staleTicker = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  staleTicker.setDefaultTimeout(5000);
+  await staleTicker.route("**/TickerStrip-*.js", (route) => route.abort());
+  await staleTicker.goto(`${BASE}/`, { waitUntil: "networkidle" });
+  check(
+    "missing ticker chunk leaves the header and page intact",
+    (await staleTicker.locator(".site-header__logo").count()) === 1 &&
+      (await staleTicker.locator(".hero__title").count()) === 1 &&
+      (await staleTicker.locator('[role="alert"]').count()) === 0
+  );
+  await staleTicker.close();
 
   // --- Mobile + reduced-motion pass ---
   const mobile = await browser.newPage({

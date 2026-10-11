@@ -1,10 +1,17 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useReducedMotion } from "framer-motion";
 import { NAV_ITEMS } from "@data/navigation.js";
 import { navShortcut } from "@/shell/hotkey.js";
 import { shortcutsEnabled } from "@/shell/shortcuts.js";
+import { ChunkErrorBoundary } from "@components/common/ChunkErrorBoundary.jsx";
 import "./siteHeader.css";
+import "./tickerStrip.css";
+
+// The ticker and its simulation load right after first paint: they're decoration, and this keeps the
+// initial bundle in budget. The placeholder holds the strip's height so nothing shifts when it arrives.
+const TickerStrip = lazy(() => import("./TickerStrip.jsx").then((module) => ({ default: module.TickerStrip })));
+const tickerPlaceholder = <div className="ticker" aria-hidden="true" />;
 
 const cls = (...classes) => classes.filter(Boolean).join(" ");
 
@@ -48,6 +55,11 @@ export const SiteHeader = () => {
 
   return (
     <header className="site-header">
+      <ChunkErrorBoundary fallback={tickerPlaceholder}>
+        <Suspense fallback={tickerPlaceholder}>
+          <TickerStrip />
+        </Suspense>
+      </ChunkErrorBoundary>
       <div className="site-header__container">
         <NavLink to="/" className="site-header__logo" onClick={closeMenu}>
           PP_

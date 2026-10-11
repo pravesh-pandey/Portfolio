@@ -1,0 +1,68 @@
+.ticker {
+  display: flex;
+  align-items: center;
+  height: 1.6rem;
+  overflow: hidden;
+  background: var(--pane-2);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-2);
+}
+
+.ticker:hover,
+.ticker:focus-visible {
+  color: var(--text);
+}
+
+.ticker__track {
+  display: flex;
+  white-space: nowrap;
+}
+
+.ticker__group {
+  display: flex;
+  gap: 1.6rem;
+  padding: 0 1rem;
+}
+
+.ticker__group--copy {
+  display: none;
+}
+
+.ticker__label {
+  color: var(--amber);
+}
+
+.ticker__up {
+  color: var(--green);
+}
+
+.ticker__down {
+  color: var(--amber);
+}
+
+.ticker__alert {
+  color: var(--red);
+}
+
+.ticker__note {
+  color: var(--dim);
+}
+
+/* On narrow screens the strip doesn't fit, so it scrolls: two identical groups, shifted by one group width. */
+@media (max-width: 900px) {
+  .ticker__track--marquee {
+    animation: ticker-scroll 30s linear infinite;
+  }
+
+  .ticker__track--marquee .ticker__group--copy {
+    display: flex;
+  }
+}
+
+@keyframes ticker-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
