@@ -47,7 +47,11 @@ This is a monorepo with a `client/` (React SPA) and `server/` (Express API).
 - **Key libraries**: Framer Motion (short reveals and drawer motion). No Three.js and no Lenis; avoid adding runtime dependencies.
 - **Look**: dark trading-terminal theme. Color, font and radius tokens live on `:root` in `src/styles/global.css`; older names (`--accent*`, `--surface*`, `--card`, `--text-dim`, `--font-body`, `--font-display`) alias the new tokens. JetBrains Mono for UI, headings and data; Inter for paragraphs. Red is for alerts only.
 - **Path aliases**: `@`, `@components`, `@pages`, `@styles`, `@data`, `@layout`, `@hooks` — all resolve under `src/`. Pure modules imported by unit tests (`src/data/*`, `src/shell/commands.js`, `src/shell/hotkey.js`, `src/sim/*`) use relative imports only, because `node --test` doesn't resolve the aliases.
-- **Layout**: `AppLayout` wraps every page with `SiteHeader`, `SiteFooter` and the fixed bottom `StatusBar`.
+- **Layout**: `AppLayout` wraps every page with `SiteHeader`, `SiteFooter` and `ShellHost` (the fixed bottom status bar with the `>_ Shell` button).
+- **Shell**: `src/shell/`.
+  - `ShellHost` owns the toggle: the button, the backtick via `hotkey.js`, and open/maximized state persisted in `localStorage` with try/catch. It lazy-loads `ShellDrawer` inside `ChunkErrorBoundary`, and sets `body[data-shell]` so the page pads for the open drawer.
+  - All commands live in `commands.js` and return `{ lines, navigate?, href?, clear?, close?, shortcuts? }`. Add new commands there, with a test in `tests/shell.test.js`.
+  - Single-key shortcuts (`` ` ``, `1`–`5`) honour `shortcuts.js`, so visitors can turn them off with `shortcuts off`.
 - **Routes** (`router.jsx`): `/`, `/trading`, `/case-studies/:slug`, `/projects`, `/work-with-me`. Old routes (`/about`, `/experience`, `/skills`, `/achievements`, `/contact`, `/process`, `/brief`) redirect.
 - **Static data**: `src/data/profile.js` (projects with stable `slug`s, experience, skills, awards), `src/data/caseStudies.js` (case-study copy; trading entries must contain no numbers, enforced by `tests/caseStudies.test.js`), `src/data/links.js` (email, Upwork, social links).
 - **Tests**: `npm test` runs `node --test` over `client/tests/`. `scripts/verify-redesign.mjs` is a Playwright smoke test against `vite preview` on port 4173; set `CHROME_PATH` to reuse an installed Chromium.

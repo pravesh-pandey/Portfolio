@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useReducedMotion } from "framer-motion";
 import { NAV_ITEMS } from "@data/navigation.js";
+import { navShortcut } from "@/shell/hotkey.js";
+import { shortcutsEnabled } from "@/shell/shortcuts.js";
 import "./siteHeader.css";
 
 const cls = (...classes) => classes.filter(Boolean).join(" ");
@@ -30,6 +32,19 @@ export const SiteHeader = () => {
       navigate(path);
     }
   };
+
+  // Number keys follow the menu ([1] hire … [4] projects); goTo changes every render, so re-subscribe each time.
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (!shortcutsEnabled()) return;
+      const path = navShortcut(event, NAV_ITEMS);
+      if (!path) return;
+      event.preventDefault();
+      goTo(path);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  });
 
   return (
     <header className="site-header">

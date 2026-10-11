@@ -119,8 +119,96 @@ const run = async () => {
   check("brief form present", (await page.locator(".brief-form").count()) === 1);
   check("process steps present", (await page.locator(".process-card").count()) === 4);
 
+  // --- Shell drawer ---
+  await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
+  const isActive = (cls) => page.evaluate((name) => document.activeElement?.classList.contains(name) ?? false, cls);
+  check("shell is closed by default", (await page.locator("#shell").count()) === 0);
+  await attempt(page.click(".status-bar__shell"));
+  await attempt(page.waitForSelector("#shell"));
+  check("shell opens from the status bar", (await page.locator("#shell").count()) === 1);
+  check("shell input has focus", await isActive("shell__input"));
+  check(
+    "open shell pads the page",
+    await page.evaluate(() => parseFloat(getComputedStyle(document.body).paddingBottom) > 200)
+  );
+  await page.keyboard.press("Tab");
+  check("Tab on an empty prompt leaves the shell (no trap)", !(await isActive("shell__input")));
+  await attempt(page.focus(".shell__input"));
+  await page.keyboard.type("open flowpulse");
+  await page.keyboard.press("Enter");
+  await attempt(page.waitForURL("**/case-studies/flowpulse"));
+  check("open flowpulse navigates", page.url().includes("/case-studies/flowpulse"));
+  await page.keyboard.press("Escape");
+  check("Esc closes the shell", (await page.locator("#shell").count()) === 0);
+  check("focus returns to the shell button", await isActive("status-bar__shell"));
+  await page.keyboard.press("`");
+  await attempt(page.waitForSelector("#shell"));
+  check("backtick opens the shell", (await page.locator("#shell").count()) === 1);
+  await page.keyboard.press("`");
+  check("backtick in the empty shell input closes it", (await page.locator("#shell").count()) === 0);
+  await page.keyboard.press("2");
+  await attempt(page.waitForURL("**/trading"));
+  check("number key 2 opens /trading", page.url().endsWith("/trading"));
+  await page.keyboard.press("`");
+  await attempt(page.waitForSelector("#shell"));
+  await page.keyboard.type("shortcuts off");
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("Escape");
+  await page.keyboard.press("`");
+  check("shortcuts off disables the backtick", (await page.locator("#shell").count()) === 0);
+  await attempt(page.click(".status-bar__shell"));
+  await attempt(page.waitForSelector("#shell"));
+  await page.keyboard.type("shortcuts on");
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("Escape");
+  await page.goto(`${BASE}/#contact`, { waitUntil: "networkidle" });
+  const formFocused = await attempt(page.focus("#name"));
+  await page.keyboard.type("a`2b");
+  check(
+    "backtick and digits type normally in form fields",
+    formFocused &&
+      (await page.inputValue("#name")) === "a`2b" &&
+      (await page.locator("#shell").count()) === 0 &&
+      page.url().includes("#contact")
+  );
+
   check("no console errors (desktop)", errors.length === 0, errors.join(" | ").slice(0, 300));
   await page.close();
+
+  // --- Storage blocked (private mode) ---
+  const blocked = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  blocked.setDefaultTimeout(5000);
+  const blockedErrors = [];
+  blocked.on("pageerror", (e) => blockedErrors.push(String(e)));
+  await blocked.addInitScript(() => {
+    Object.defineProperty(window, "localStorage", {
+      get() {
+        throw new Error("storage blocked");
+      }
+    });
+  });
+  await blocked.goto(`${BASE}/`, { waitUntil: "networkidle" });
+  await attempt(blocked.click(".status-bar__shell"));
+  await attempt(blocked.waitForSelector("#shell"));
+  check(
+    "shell works with storage blocked",
+    (await blocked.locator("#shell").count()) === 1 && blockedErrors.length === 0,
+    blockedErrors.join(" | ").slice(0, 300)
+  );
+  await blocked.close();
+
+  // --- Stale tab after a redeploy: the shell chunk is gone ---
+  const stale = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  stale.setDefaultTimeout(5000);
+  await stale.route("**/ShellDrawer-*.js", (route) => route.abort());
+  await stale.goto(`${BASE}/`, { waitUntil: "networkidle" });
+  await attempt(stale.click(".status-bar__shell"));
+  await attempt(stale.waitForSelector('[role="alert"]'));
+  check(
+    "missing shell chunk shows a reload prompt and the page survives",
+    (await text(stale, '[role="alert"]')).includes("updated") && (await stale.locator(".hero__title").count()) === 1
+  );
+  await stale.close();
 
   // --- Mobile + reduced-motion pass ---
   const mobile = await browser.newPage({
@@ -139,6 +227,12 @@ const run = async () => {
   check("mobile menu offers the PDF", await mobile.locator('.site-nav__pdf a[href$="resume.pdf"]').isVisible());
   await attempt(mobile.click(".site-header__scrim"));
   await mobile.screenshot({ path: "/tmp/portfolio-mobile.png", fullPage: true });
+  await mobile.goto(`${BASE}/`, { waitUntil: "networkidle" });
+  await attempt(mobile.click(".status-bar__shell"));
+  await attempt(mobile.click('.shell__chips .chip:has-text("trading")'));
+  await attempt(mobile.waitForURL("**/trading"));
+  check("mobile shell chip navigates", mobile.url().endsWith("/trading"));
+  await attempt(mobile.click(".status-bar__shell"));
   for (const route of ["/", "/trading", "/case-studies/flowpulse", "/projects", "/work-with-me"]) {
     await mobile.goto(`${BASE}${route}`, { waitUntil: "networkidle" });
     const overflow = await mobile.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
