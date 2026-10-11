@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { useReducedMotion } from "framer-motion";
 import { SiteHeader } from "@components/navigation/SiteHeader.jsx";
 import { SiteFooter } from "@components/navigation/SiteFooter.jsx";
+import { StatusBar } from "@components/navigation/StatusBar.jsx";
 
 export const AppLayout = ({ children }) => {
   const location = useLocation();
@@ -21,6 +22,7 @@ export const AppLayout = ({ children }) => {
         <main>{children}</main>
         <SiteFooter />
       </div>
+      <StatusBar />
     </>
   );
 };

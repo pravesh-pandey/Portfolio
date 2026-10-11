@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { SectionHeading } from "@components/common/SectionHeading.jsx";
 import { Reveal } from "@components/common/Reveal.jsx";
+import { EMAIL, socialLinks } from "@data/links.js";
 import "./contactSection.css";
 
 const initialState = {
@@ -8,13 +9,6 @@ const initialState = {
   email: "",
   message: ""
 };
-
-const socialLinks = [
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/pravesh25/" },
-  { label: "GitHub", href: "https://github.com/pravesh-pandey" },
-  { label: "LeetCode", href: "https://leetcode.com/u/pravesh_pandey/" },
-  { label: "Upwork", href: "https://www.upwork.com/freelancers/~0189bb4c7f00dbde1e" }
-];
 
 export const ContactSection = () => {
   const [formValues, setFormValues] = useState(initialState);
@@ -122,16 +116,16 @@ export const ContactSection = () => {
           {feedback ? (
             <>
               {feedback} Prefer email?{" "}
-              <a href="mailto:pravesh.pandey.mnnit@gmail.com" className="contact-link">
-                pravesh.pandey.mnnit@gmail.com
+              <a href={`mailto:${EMAIL}`} className="contact-link">
+                {EMAIL}
               </a>
             </>
           ) : null}
         </p>
 
         <div className="contact-info">
-          <a href="mailto:pravesh.pandey.mnnit@gmail.com" className="contact-link">
-            pravesh.pandey.mnnit@gmail.com
+          <a href={`mailto:${EMAIL}`} className="contact-link">
+            {EMAIL}
           </a>
           <div className="social-links">
             {socialLinks.map((social) => (

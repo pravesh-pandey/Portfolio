@@ -37,6 +37,16 @@ const run = async () => {
     check(`section #${id} exists`, (await page.locator(`#${id}`).count()) === 1);
   }
   check("social links are real", (await page.locator('.social-links a[href="#"]').count()) === 0);
+  check("nav has four numbered items", (await page.locator(".site-nav__key").count()) === 4);
+  check("nav labels are terminal-style", (await text(page, ".site-nav__link")).includes("[1]"));
+  check("status bar shows copyright", (await text(page, ".status-bar")).includes("Pravesh Pandey"));
+  check("footer links Upwork", (await page.locator('.site-footer a[href*="upwork.com"]').count()) === 1);
+  await page.mouse.wheel(0, 1500);
+  await page.waitForTimeout(500);
+  check(
+    "header stays on screen while scrolling",
+    await page.evaluate(() => document.querySelector(".site-header")?.getBoundingClientRect().top === 0)
+  );
   await page.screenshot({ path: "/tmp/portfolio-desktop.png", fullPage: true });
 
   const hashRedirects = [
@@ -83,6 +93,9 @@ const run = async () => {
   check("mobile hero renders", (await mobile.locator(".hero-scene__title").count()) === 1);
   const metricText = (await mobile.locator(".impact__metric dt").first().textContent()) ?? "";
   check("reduced-motion counters show final value", !metricText.trim().startsWith("0%") && metricText.trim() !== "0");
+  await attempt(mobile.click(".site-header__toggle"));
+  check("mobile menu offers the PDF", await mobile.locator('.site-nav__pdf a[href$="resume.pdf"]').isVisible());
+  await attempt(mobile.click(".site-header__scrim"));
   await mobile.screenshot({ path: "/tmp/portfolio-mobile.png", fullPage: true });
   check("no console errors (mobile)", mobileErrors.length === 0, mobileErrors.join(" | ").slice(0, 300));
   await mobile.close();

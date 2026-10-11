@@ -1,0 +1,24 @@
+.status-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+  height: calc(var(--status-bar-height) + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 1rem env(safe-area-inset-bottom);
+  background: var(--pane-2);
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--dim);
+}
+
+.status-bar__left {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}

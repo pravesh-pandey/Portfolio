@@ -2,6 +2,7 @@ import { PageIntro } from "@components/common/PageIntro.jsx";
 import { ProcessSteps } from "@components/process/ProcessSteps.jsx";
 import { ProjectBriefForm } from "@components/forms/ProjectBriefForm.jsx";
 import { processSteps } from "@data/profile.js";
+import { EMAIL, UPWORK_URL } from "@data/links.js";
 import "./workWithMePage.css";
 
 export const WorkWithMePage = () => (
@@ -31,11 +32,11 @@ export const WorkWithMePage = () => (
         </ul>
         <div className="brief__contact">
           Prefer direct contact?{" "}
-          <a href="mailto:pravesh.pandey.mnnit@gmail.com">pravesh.pandey.mnnit@gmail.com</a>
+          <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
         </div>
         <div className="brief__contact">
           Prefer to hire through Upwork?{" "}
-          <a href="https://www.upwork.com/freelancers/~0189bb4c7f00dbde1e" target="_blank" rel="noopener noreferrer">
+          <a href={UPWORK_URL} target="_blank" rel="noopener noreferrer">
             Hire me on Upwork →
           </a>
         </div>

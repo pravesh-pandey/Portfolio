@@ -1,9 +1,6 @@
 export const NAV_ITEMS = [
-  { path: "#", label: "Home" },
-  { path: "#about", label: "About" },
-  { path: "#experience", label: "Experience" },
-  { path: "#projects", label: "Projects" },
-  { path: "#skills", label: "Skills" },
-  { path: "#contact", label: "Contact" },
-  { path: "/work-with-me", label: "Work with me" }
+  { path: "/work-with-me", key: "1", label: "hire" },
+  { path: "/trading", key: "2", label: "trading" },
+  { path: "#experience", key: "3", label: "experience" },
+  { path: "/projects", key: "4", label: "projects" }
 ];
