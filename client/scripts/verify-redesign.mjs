@@ -139,6 +139,11 @@ const run = async () => {
   check("mobile menu offers the PDF", await mobile.locator('.site-nav__pdf a[href$="resume.pdf"]').isVisible());
   await attempt(mobile.click(".site-header__scrim"));
   await mobile.screenshot({ path: "/tmp/portfolio-mobile.png", fullPage: true });
+  for (const route of ["/", "/trading", "/case-studies/flowpulse", "/projects", "/work-with-me"]) {
+    await mobile.goto(`${BASE}${route}`, { waitUntil: "networkidle" });
+    const overflow = await mobile.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    check(`no horizontal scroll on ${route} (mobile)`, overflow <= 0, `${overflow}px`);
+  }
   check("no console errors (mobile)", mobileErrors.length === 0, mobileErrors.join(" | ").slice(0, 300));
   await mobile.close();
 
