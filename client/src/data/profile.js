@@ -46,6 +46,7 @@ export const experienceTimeline = [
 export const projectShowcase = [
   {
     title: "FlowPulse",
+    slug: "flowpulse",
     tagline: "Real-time institutional order-flow detection for NSE options and MCX.",
     description:
       "C++20 engine that monitors NIFTY, BANKNIFTY and FINNIFTY options and MCX commodities, flags large institutional orders in real time, and paper-trades the signals with realistic P&L tracking.",
@@ -58,6 +59,7 @@ export const projectShowcase = [
   },
   {
     title: "Options Backtester for Indian F&O",
+    slug: "options-backtester",
     tagline: "Minute-level options backtesting and probability research.",
     description:
       "Backtesting platform for NSE index options that replays strategies minute by minute on archived index and option-chain data, applying Indian F&O charges to every order.",
@@ -70,6 +72,7 @@ export const projectShowcase = [
   },
   {
     title: "LocalCache",
+    slug: "localcache",
     tagline: "Disk-backed cache with O(1) lookups and Redis-like ergonomics.",
     description:
       "Filesystem-backed cache that stores entries as sharded, hash-addressed files so lookups stay O(1) as the cache grows, without keeping an in-memory index.",
@@ -83,6 +86,7 @@ export const projectShowcase = [
   },
   {
     title: "Market Depth Trading Bot",
+    slug: "market-depth-bot",
     tagline: "Order-book analysis and paper trading on the Groww API.",
     description:
       "Java service that monitors live market depth, detects institutional orders and order-book imbalances, and executes paper trades through the Groww API.",
@@ -94,6 +98,7 @@ export const projectShowcase = [
   },
   {
     title: "AI Sudoku Solver",
+    slug: "ai-sudoku-solver",
     tagline: "Computer vision-based puzzle recognition and solving.",
     description:
       "Developed end-to-end system using TensorFlow and OpenCV to detect, recognize, and solve Sudoku puzzles from camera input with high accuracy.",
@@ -106,6 +111,7 @@ export const projectShowcase = [
   },
   {
     title: "IMME Conference Platform",
+    slug: "imme-conference-platform",
     tagline: "Full-stack conference management system.",
     description:
       "Built comprehensive conference management platform serving 1,000+ attendees with real-time session updates, speaker profiles, and attendee feedback system.",
@@ -117,6 +123,7 @@ export const projectShowcase = [
   },
   {
     title: "TamperScripts Collection",
+    slug: "tamperscripts",
     tagline: "Browser automation scripts for enhanced web functionality.",
     description:
       "Developed collection of userscripts enhancing browser functionality across popular websites, supporting Chrome, Firefox, Edge, Safari, and Opera.",
@@ -129,6 +136,7 @@ export const projectShowcase = [
   },
   {
     title: "Cell Phone Controlled Car",
+    slug: "cell-phone-controlled-car",
     tagline: "IoT-based robotic car with smartphone control.",
     description:
       "Designed three-wheeled robotic car controlled via smartphone accelerometer data transmitted over WiFi, demonstrating practical IoT integration.",
@@ -141,6 +149,7 @@ export const projectShowcase = [
   },
   {
     title: "Digital Marketing Portfolio Website",
+    slug: "digital-marketing-website",
     tagline: "Modern single-page portfolio with JSON-based content management.",
     description:
       "Built a responsive, mobile-first portfolio website featuring content management through JSON configuration, optimized for performance without external dependencies.",
@@ -153,6 +162,7 @@ export const projectShowcase = [
   },
   {
     title: "Covin Web Application",
+    slug: "covin",
     tagline: "Full-stack web application with Vite and Node.js.",
     description:
       "Built modern web application with separate frontend and backend architecture, utilizing Vite for optimized frontend build process.",
@@ -165,6 +175,7 @@ export const projectShowcase = [
   },
   {
     title: "STOCKHOLM_PARING",
+    slug: "stockholm-paring",
     tagline: "Web application with social authentication integration.",
     description:
       "Developed web application featuring multiple authentication systems including Facebook and Google sign-in, with user management capabilities.",
@@ -177,6 +188,7 @@ export const projectShowcase = [
   },
   {
     title: "Curves - Mathematical Visualization",
+    slug: "curves",
     tagline: "MATLAB implementation of mathematical curves.",
     description:
       "Created MATLAB project exploring mathematical curve representations including Hermite, Bézier, and B-spline curves in 2D and 3D space.",
