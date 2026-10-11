@@ -5,7 +5,7 @@ import { achievements } from "@data/profile.js";
 export const AwardsSection = () => (
   <section id="awards" className="home-section">
     <SectionHeading
-      number="05"
+      number="06"
       label="Awards"
       title="Recognition and certifications."
       lead="Amazon engineering awards, national competition placements, and professional certifications."

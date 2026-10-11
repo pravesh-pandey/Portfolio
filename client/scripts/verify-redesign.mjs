@@ -1,6 +1,7 @@
 import { chromium } from "playwright-chromium";
 
 const BASE = (process.env.VERIFY_BASE_URL ?? "http://localhost:4173").replace(/\/$/, "");
+const TAGLINE = "> pravesh pandey · sde @ amazon alexa ai · quant dev";
 
 const results = [];
 const check = (name, ok, extra = "") => {
@@ -31,9 +32,14 @@ const run = async () => {
   });
 
   await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
-  check("hero renders", (await page.locator(".hero-scene__title").count()) === 1);
+  check("hero renders", (await page.locator(".hero__title").count()) === 1);
+  check("hero offers three paths", (await page.locator(".hero__path").count()) === 3);
+  await attempt(page.click('.site-nav__link:has-text("trading")'));
+  await attempt(page.click(".site-header__logo"));
+  check("tagline doesn't retype on return", (await text(page, '.hero__tag [aria-hidden="true"]')) === TAGLINE);
+  check("experience section links the PDF", (await page.locator('#experience a[href$="resume.pdf"]').count()) === 1);
 
-  for (const id of ["impact", "about", "experience", "projects", "skills", "awards", "contact"]) {
+  for (const id of ["trading", "impact", "about", "experience", "projects", "skills", "awards", "contact"]) {
     check(`section #${id} exists`, (await page.locator(`#${id}`).count()) === 1);
   }
   check("social links are real", (await page.locator('.social-links a[href="#"]').count()) === 0);
@@ -111,7 +117,8 @@ const run = async () => {
   const mobileErrors = [];
   mobile.on("pageerror", (e) => mobileErrors.push(String(e)));
   await mobile.goto(`${BASE}/`, { waitUntil: "networkidle" });
-  check("mobile hero renders", (await mobile.locator(".hero-scene__title").count()) === 1);
+  check("mobile hero renders", (await mobile.locator(".hero__title").count()) === 1);
+  check("reduced motion shows the full tagline at once", (await text(mobile, '.hero__tag [aria-hidden="true"]')) === TAGLINE);
   const metricText = (await mobile.locator(".impact__metric dt").first().textContent()) ?? "";
   check("reduced-motion counters show final value", !metricText.trim().startsWith("0%") && metricText.trim() !== "0");
   await attempt(mobile.click(".site-header__toggle"));

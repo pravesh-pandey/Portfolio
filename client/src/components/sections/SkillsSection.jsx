@@ -5,7 +5,7 @@ import { skillsMatrix } from "@data/profile.js";
 export const SkillsSection = () => (
   <section id="skills" className="home-section">
     <SectionHeading
-      number="04"
+      number="05"
       label="Skills"
       title="Technical expertise across the stack."
       lead="Strongest in distributed systems, backend development, and cloud infrastructure — with working depth in AI tooling."

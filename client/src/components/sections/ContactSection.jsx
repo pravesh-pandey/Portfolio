@@ -51,7 +51,7 @@ export const ContactSection = () => {
   return (
     <section id="contact" className="home-section contact">
       <SectionHeading
-        number="06"
+        number="07"
         label="Contact"
         title="Get in touch."
         lead="Have a project in mind, a role to discuss, or just want to say hello? I'm always open to new opportunities and ideas."

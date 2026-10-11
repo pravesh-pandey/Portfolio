@@ -5,7 +5,7 @@ import "./aboutSection.css";
 export const AboutSection = () => (
   <section id="about" className="home-section about">
     <SectionHeading
-      number="01"
+      number="02"
       label="About"
       title="Building reliable systems that deliver results."
     />
@@ -21,7 +21,8 @@ export const AboutSection = () => (
           Before Amazon, I built high-performance data processing systems at nFolks Data Solutions
           and AI-powered health applications at Phyt Health. Across all of it, the throughline is
           understanding how systems behave under production load and engineering them to stay
-          reliable as they grow.
+          reliable as they grow. Outside Amazon, I build trading systems for Indian markets (order-flow detection
+          and options research) with the same production discipline.
         </p>
       </Reveal>
       <Reveal className="about__aside" delay={0.15}>
@@ -38,7 +39,7 @@ export const AboutSection = () => (
               <strong>Based in</strong> Bangalore, India
             </li>
             <li>
-              <strong>Focus</strong> Distributed systems · AI infrastructure · Backend services
+              <strong>Focus</strong> Distributed systems · Trading systems · Backend services
             </li>
           </ul>
         </aside>

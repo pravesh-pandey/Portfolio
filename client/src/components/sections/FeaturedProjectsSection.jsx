@@ -7,7 +7,7 @@ import { projectShowcase } from "@data/profile.js";
 export const FeaturedProjectsSection = () => (
   <section id="projects" className="home-section featured-projects">
     <SectionHeading
-      number="03"
+      number="04"
       label="Projects"
       title="Selected work."
       lead="Four favorites across trading systems, infrastructure, and AI."

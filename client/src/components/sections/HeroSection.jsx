@@ -1,102 +1,55 @@
-import { useRef } from "react";
-import { NavLink } from "react-router-dom";
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useReducedMotion } from "framer-motion";
+import { useTypewriter } from "@hooks/useTypewriter.js";
 import "./heroSection.css";
 
-const scrollToProjects = (event) => {
-  event.preventDefault();
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  document.getElementById("projects")?.scrollIntoView({ behavior: reduce ? "instant" : "smooth" });
-};
+const TAGLINE = "> pravesh pandey · sde @ amazon alexa ai · quant dev";
 
-const HeroIntro = () => (
-  <>
-    <span className="hero-scene__eyebrow">Software Development Engineer · Amazon Alexa AI</span>
-    <h1 className="hero-scene__title">
-      Pravesh Pandey
-      <em>builds systems that scale.</em>
-    </h1>
-    <p className="hero-scene__lead">
-      Distributed systems, AI infrastructure, and backend services that hold up in production —
-      from Alexa&apos;s NLU pipeline to data platforms processing at scale.
-    </p>
-    <div className="hero-scene__actions">
-      <a className="button button--primary" href="#projects" onClick={scrollToProjects}>
-        View my work
-      </a>
-      <NavLink className="button" to="/work-with-me">
-        Work with me
-      </NavLink>
-      <a
-        className="button button--ghost"
-        href={`${import.meta.env.BASE_URL}resume.pdf`}
-        target="_blank"
-        rel="noreferrer"
-      >
-        Resume
-      </a>
-    </div>
-  </>
-);
+const PATHS = [
+  { key: "1", to: "/work-with-me", title: "Hire me", detail: "Projects & Upwork" },
+  { key: "2", to: "/trading", title: "Trading systems", detail: "Order flow, backtesting" },
+  { key: "3", to: { pathname: "/", hash: "#experience" }, title: "Experience", detail: "Track record & CV" }
+];
 
-const HeroBridge = () => (
-  <>
-    <span className="hero-scene__eyebrow">The short version</span>
-    <h2 className="hero-scene__bridge-title">
-      I turn complex requirements into <em>reliable, measurable systems</em> — latency, locales,
-      and dollars saved.
-    </h2>
-  </>
-);
+// The tagline types out once per visit; coming back to the home page shows it instantly.
+let taglineTyped = false;
 
 export const HeroSection = () => {
-  const ref = useRef(null);
   const reduceMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const [firstVisit] = useState(() => !taglineTyped);
+  const typed = useTypewriter(TAGLINE, reduceMotion || !firstVisit ? 0 : 35);
 
-  const introOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
-  const introY = useTransform(scrollYProgress, [0, 0.4], ["0%", "-10%"]);
-  const introScale = useTransform(scrollYProgress, [0, 0.4], [1, 0.94]);
-  const bridgeOpacity = useTransform(scrollYProgress, [0.45, 0.8], [0, 1]);
-  const bridgeY = useTransform(scrollYProgress, [0.45, 0.8], ["18vh", "0vh"]);
-  const hintOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0]);
-  // Faded-out layers still hit-test; gate pointer events so the invisible
-  // layer never swallows clicks meant for the visible one.
-  const introPointerEvents = useTransform(introOpacity, (v) => (v > 0.05 ? "auto" : "none"));
-  const bridgePointerEvents = useTransform(bridgeOpacity, (v) => (v > 0.05 ? "auto" : "none"));
-
-  if (reduceMotion) {
-    return (
-      <section className="hero-scene hero-scene--static">
-        <div className="hero-scene__layer">
-          <HeroIntro />
-        </div>
-        <div className="hero-scene__layer hero-scene__layer--bridge">
-          <HeroBridge />
-        </div>
-      </section>
-    );
-  }
+  useEffect(() => {
+    taglineTyped = true;
+  }, []);
 
   return (
-    <section className="hero-scene" ref={ref}>
-      <div className="hero-scene__sticky">
-        <motion.div
-          className="hero-scene__layer"
-          style={{ opacity: introOpacity, y: introY, scale: introScale, pointerEvents: introPointerEvents }}
-        >
-          <HeroIntro />
-        </motion.div>
-        <motion.div
-          className="hero-scene__layer hero-scene__layer--bridge"
-          style={{ opacity: bridgeOpacity, y: bridgeY, pointerEvents: bridgePointerEvents }}
-        >
-          <HeroBridge />
-        </motion.div>
-        <motion.span className="hero-scene__hint" aria-hidden="true" style={{ opacity: hintOpacity }}>
-          Scroll
-        </motion.span>
-      </div>
+    <section className="hero" aria-labelledby="hero-title">
+      <p className="hero__tag">
+        <span className="sr-only">{TAGLINE}</span>
+        <span aria-hidden="true">{typed}</span>
+      </p>
+      <h1 className="hero__title" id="hero-title">
+        Backend systems at Amazon scale.{" "}
+        <span className="hero__accent">
+          Trading systems at market speed.
+          <span className="hero__cursor" aria-hidden="true" />
+        </span>
+      </h1>
+      <p className="hero__lead">
+        I design, build and ship software that has to be fast and correct, for clients, teams and markets.
+      </p>
+      <nav className="hero__paths" aria-label="Choose a path">
+        {PATHS.map((path) => (
+          <Link key={path.key} className="hero__path" to={path.to}>
+            <span className="hero__path-title">
+              <span className="hero__path-key">[{path.key}]</span> {path.title} →
+            </span>
+            <span className="hero__path-detail">{path.detail}</span>
+          </Link>
+        ))}
+      </nav>
     </section>
   );
 };
