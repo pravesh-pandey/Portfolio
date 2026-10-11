@@ -8,11 +8,22 @@ const check = (name, ok, extra = "") => {
   console.log(`${ok ? "PASS" : "FAIL"} ${name}${extra ? ` — ${extra}` : ""}`);
 };
 
+// Missing elements count as empty or failed instead of hanging, so a red run still prints every FAIL.
+const text = async (target, selector) =>
+  (await target.locator(selector).count()) > 0 ? ((await target.locator(selector).first().textContent()) ?? "") : "";
+const attempt = (promise) => promise.then(
+  () => true,
+  () => false
+);
+
 const run = async () => {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch(
+    process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {}
+  );
 
   // --- Desktop pass ---
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  page.setDefaultTimeout(5000);
   const errors = [];
   page.on("pageerror", (e) => errors.push(String(e)));
   page.on("console", (m) => {
@@ -65,6 +76,7 @@ const run = async () => {
     viewport: { width: 375, height: 720 },
     reducedMotion: "reduce"
   });
+  mobile.setDefaultTimeout(5000);
   const mobileErrors = [];
   mobile.on("pageerror", (e) => mobileErrors.push(String(e)));
   await mobile.goto(`${BASE}/`, { waitUntil: "networkidle" });

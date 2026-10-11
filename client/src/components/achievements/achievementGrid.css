@@ -13,7 +13,8 @@
   font-size: 0.8rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(28, 26, 22, 0.5);
+  color: var(--dim);
+  font-family: var(--font-mono);
 }
 
 .achievement-card h3 {

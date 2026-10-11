@@ -21,7 +21,7 @@
 .project-card:hover {
   border-color: rgba(var(--accent-rgb), 0.45);
   transform: translateY(-5px);
-  box-shadow: 0 24px 50px rgba(67, 52, 36, 0.2);
+  box-shadow: none;
 }
 
 .project-card__header h3 {

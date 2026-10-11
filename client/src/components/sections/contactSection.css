@@ -29,7 +29,7 @@
 .form-group textarea {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: var(--radius);
   padding: 0.85rem 1rem;
   color: var(--text);
   font-family: var(--font-body);
@@ -51,20 +51,21 @@
 
 .submit-btn {
   align-self: flex-start;
-  background: linear-gradient(120deg, var(--accent), var(--accent-2));
-  border: none;
-  color: #fff8f0;
-  padding: 0.8rem 2rem;
-  border-radius: 999px;
-  font-size: 1rem;
+  background: var(--amber);
+  border: 1px solid var(--amber);
+  color: var(--bg);
+  padding: 0.6rem 1.4rem;
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
   margin-top: 1rem;
 }
 
 .submit-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 16px 30px rgba(var(--accent-2-rgb), 0.3);
+  background: transparent;
+  color: var(--amber);
 }
 
 .submit-btn:disabled {
@@ -93,7 +94,7 @@
 }
 
 .contact-status--error {
-  color: #b42318;
+  color: var(--red);
 }
 
 .contact-info {
