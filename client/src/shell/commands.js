@@ -70,7 +70,7 @@ const COMMANDS = [
   },
   { name: "open", usage: "open <project>", summary: "open a project or case study", run: (args) => openProject(args[0]) },
   { name: "cat", usage: "cat <project>", summary: "print a project summary here", run: (args) => catProject(args[0]) },
-  { name: "lab", usage: "lab", summary: "order-flow playground", run: () => ({ lines: ["lab: coming soon"] }) },
+  { name: "lab", usage: "lab", summary: "order-flow playground", run: () => opened("/lab", "Lab") },
   {
     name: "contact",
     usage: "contact",

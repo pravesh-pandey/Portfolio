@@ -57,7 +57,7 @@ const run = async () => {
     check(`section #${id} exists`, (await page.locator(`#${id}`).count()) === 1);
   }
   check("social links are real", (await page.locator('.social-links a[href="#"]').count()) === 0);
-  check("nav has four numbered items", (await page.locator(".site-nav__key").count()) === 4);
+  check("nav has five numbered items", (await page.locator(".site-nav__key").count()) === 5);
   check("nav labels are terminal-style", (await text(page, ".site-nav__link")).includes("[1]"));
   check("status bar shows copyright", (await text(page, ".status-bar")).includes("Pravesh Pandey"));
   check("footer links Upwork", (await page.locator('.site-footer a[href*="upwork.com"]').count()) === 1);
@@ -95,6 +95,7 @@ const run = async () => {
   check("trading page lists two case studies", (await page.locator(".case-pane--study").count()) === 2);
   check("trading page explains what isn't published", (await page.locator(".not-published li").count()) === 3);
   check("trading page ends with a hire CTA", (await page.locator(".hire-cta").count()) === 1);
+  check("trading page links to the lab", (await page.locator('.case-pane--lab a[href$="/lab"]').count()) === 1);
   for (const slug of ["flowpulse", "options-backtester", "localcache"]) {
     await page.goto(`${BASE}/case-studies/${slug}`, { waitUntil: "networkidle" });
     check(
@@ -132,6 +133,35 @@ const run = async () => {
   await page.goto(`${BASE}/work-with-me`, { waitUntil: "networkidle" });
   check("brief form present", (await page.locator(".brief-form").count()) === 1);
   check("process steps present", (await page.locator(".process-card").count()) === 4);
+
+  // --- Lab ---
+  await page.goto(`${BASE}/lab?seed=42`, { waitUntil: "networkidle" });
+  await attempt(page.waitForSelector(".lab__grid"));
+  check("lab renders", (await page.locator(".lab__grid").count()) === 1);
+  check("lab says the data is simulated", (await text(page, ".page__eyebrow")).includes("simulated"));
+  check("lab runs the seed from the URL", (await text(page, ".lab__seed")) === "seed 42");
+  check("lab labels its VPIN variant", (await page.locator('.pane__label:has-text("tick-rule variant")').count()) === 1);
+  const labStart = await text(page, ".lab__value");
+  await page.waitForTimeout(1600);
+  check("lab metrics update", labStart !== "" && (await text(page, ".lab__value")) !== labStart);
+  await attempt(page.focus(".lab__slider input"));
+  await page.keyboard.press("Home");
+  const alertBefore = await text(page, ".lab__alerts li");
+  await attempt(page.click('button:has-text("inject large buy")'));
+  const injected = await attempt(
+    page.waitForFunction(
+      (before) => {
+        const latest = document.querySelector(".lab__alerts li")?.textContent ?? "";
+        return latest !== before && latest.includes("BUY");
+      },
+      alertBefore,
+      { timeout: 4000 }
+    )
+  );
+  check("injected buy shows up in the alert log", injected);
+  await page.goto(`${BASE}/lab`, { waitUntil: "networkidle" });
+  await attempt(page.waitForURL(/[?&]seed=\d+/));
+  check("lab writes its seed into the URL", /[?&]seed=\d+/.test(page.url()));
 
   // --- Shell drawer ---
   await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
@@ -237,6 +267,18 @@ const run = async () => {
   );
   await staleTicker.close();
 
+  // --- Stale tab after a redeploy: the lab chunk is gone ---
+  const staleLab = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  staleLab.setDefaultTimeout(5000);
+  await staleLab.route("**/LabPage-*.js", (route) => route.abort());
+  await staleLab.goto(`${BASE}/lab`, { waitUntil: "networkidle" });
+  await attempt(staleLab.waitForSelector('[role="alert"]'));
+  check(
+    "missing lab chunk shows a reload prompt and the header survives",
+    (await text(staleLab, '[role="alert"]')).includes("updated") && (await staleLab.locator(".site-header").count()) === 1
+  );
+  await staleLab.close();
+
   // --- Mobile + reduced-motion pass ---
   const mobile = await browser.newPage({
     viewport: { width: 375, height: 720 },
@@ -260,7 +302,7 @@ const run = async () => {
   await attempt(mobile.waitForURL("**/trading"));
   check("mobile shell chip navigates", mobile.url().endsWith("/trading"));
   await attempt(mobile.click(".status-bar__shell"));
-  for (const route of ["/", "/trading", "/case-studies/flowpulse", "/projects", "/work-with-me"]) {
+  for (const route of ["/", "/trading", "/case-studies/flowpulse", "/projects", "/work-with-me", "/lab"]) {
     await mobile.goto(`${BASE}${route}`, { waitUntil: "networkidle" });
     const overflow = await mobile.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     check(`no horizontal scroll on ${route} (mobile)`, overflow <= 0, `${overflow}px`);

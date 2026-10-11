@@ -52,7 +52,12 @@ This is a monorepo with a `client/` (React SPA) and `server/` (Express API).
   - `ShellHost` owns the toggle: the button, the backtick via `hotkey.js`, and open/maximized state persisted in `localStorage` with try/catch. It lazy-loads `ShellDrawer` inside `ChunkErrorBoundary`, and sets `body[data-shell]` so the page pads for the open drawer.
   - All commands live in `commands.js` and return `{ lines, navigate?, href?, clear?, close?, shortcuts? }`. Add new commands there, with a test in `tests/shell.test.js`.
   - Single-key shortcuts (`` ` ``, `1`–`5`) honour `shortcuts.js`, so visitors can turn them off with `shortcuts off`.
-- **Routes** (`router.jsx`): `/`, `/trading`, `/case-studies/:slug`, `/projects`, `/work-with-me`. Old routes (`/about`, `/experience`, `/skills`, `/achievements`, `/contact`, `/process`, `/brief`) redirect.
+- **Routes** (`router.jsx`): `/`, `/trading`, `/case-studies/:slug`, `/projects`, `/work-with-me`, `/lab` (lazy-loaded behind `ChunkErrorBoundary`; the run's seed is in `?seed=`). Old routes (`/about`, `/experience`, `/skills`, `/achievements`, `/contact`, `/process`, `/brief`) redirect.
+- **Simulation**: `src/sim/`.
+  - `market.js` is the seeded order-book simulation. `metrics.js` has OFI, microprice, VPIN (tick-rule variant) and the large-order detector. `session.js` turns steps into render-ready snapshots, with optional warm-up.
+  - `useSimulation` steps a session on an interval and pauses while the tab is hidden.
+  - `TickerStrip` (lazy-loaded inside `SiteHeader`, linking to `/lab`) and the lazy `/lab` page each own one session.
+  - Everything simulated is labelled as such. Never add accuracy or hit-rate counters: they read as performance claims.
 - **Static data**: `src/data/profile.js` (projects with stable `slug`s, experience, skills, awards), `src/data/caseStudies.js` (case-study copy; trading entries must contain no numbers, enforced by `tests/caseStudies.test.js`), `src/data/links.js` (email, Upwork, social links).
 - **Tests**: `npm test` runs `node --test` over `client/tests/`. `scripts/verify-redesign.mjs` is a Playwright smoke test against `vite preview` on port 4173; set `CHROME_PATH` to reuse an installed Chromium.
 - **Dev proxy**: Vite proxies `/api` → `http://localhost:4000` so the client hits the local server without CORS issues in dev.

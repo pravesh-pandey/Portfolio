@@ -1,0 +1,132 @@
+.lab__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.lab__slider {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-2);
+}
+
+.lab__slider input {
+  accent-color: var(--amber);
+}
+
+.lab__seed {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--dim);
+}
+
+.lab__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 1rem;
+}
+
+.lab__book {
+  grid-row: span 2;
+}
+
+.lab__value {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-mono);
+  color: var(--text);
+}
+
+.lab__explain {
+  margin: 0.6rem 0 0;
+  font-size: 0.85rem;
+}
+
+.chart {
+  display: block;
+  width: 100%;
+  height: 80px;
+}
+
+.chart polyline {
+  stroke-width: 1.5;
+}
+
+.lab__line--price {
+  stroke: var(--text);
+}
+
+.lab__line--micro {
+  stroke: var(--amber);
+}
+
+.lab__line--vpin {
+  stroke: var(--green);
+}
+
+.chart__axis {
+  stroke: var(--border);
+}
+
+.chart__bar--up {
+  fill: var(--green);
+}
+
+.chart__bar--down {
+  fill: var(--amber);
+}
+
+.ladder {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.ladder th {
+  padding: 0.2rem;
+  font-weight: 400;
+  color: var(--dim);
+}
+
+.ladder td {
+  padding: 0.15rem 0.4rem;
+  text-align: center;
+  color: var(--text-2);
+}
+
+.ladder__row--bid .ladder__price {
+  color: var(--green);
+}
+
+.ladder__row--ask .ladder__price {
+  color: var(--amber);
+}
+
+.ladder__row--bid td:first-child {
+  background: linear-gradient(to left, rgba(61, 220, 132, 0.18) var(--depth), transparent var(--depth));
+}
+
+.ladder__row--ask td:last-child {
+  background: linear-gradient(to right, rgba(255, 176, 0, 0.16) var(--depth), transparent var(--depth));
+}
+
+.lab__alerts ol {
+  display: grid;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text);
+}
+
+.lab__alert-dot {
+  color: var(--red);
+}

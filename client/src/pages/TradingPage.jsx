@@ -1,5 +1,6 @@
 import { PageIntro } from "@components/common/PageIntro.jsx";
 import { CaseStudyPane } from "@components/caseStudies/CaseStudyPane.jsx";
+import { LabPane } from "@components/caseStudies/LabPane.jsx";
 import { HireCta } from "@components/caseStudies/HireCta.jsx";
 import { caseStudies } from "@data/caseStudies.js";
 import { useDocumentTitle } from "@hooks/useDocumentTitle.js";
@@ -21,6 +22,7 @@ export const TradingPage = () => {
           .map((study) => (
             <CaseStudyPane key={study.slug} study={study} />
           ))}
+        <LabPane />
       </div>
       <section className="pane not-published" aria-labelledby="not-published-title">
         <h2 className="pane__label" id="not-published-title">

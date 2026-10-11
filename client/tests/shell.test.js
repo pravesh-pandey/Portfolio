@@ -50,8 +50,8 @@ test("resume navigates, resume --pdf opens the CV", () => {
   assert.equal(runCommand("resume --pdf").href, "resume.pdf");
 });
 
-test("lab is announced as coming soon until the playground ships", () => {
-  assert.deepEqual(runCommand("lab"), { lines: ["lab: coming soon"] });
+test("lab opens the playground", () => {
+  assert.deepEqual(runCommand("lab"), { lines: ["→ opened Lab"], navigate: "/lab" });
 });
 
 test("clear and exit signal the drawer", () => {
