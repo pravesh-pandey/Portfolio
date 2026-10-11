@@ -100,6 +100,20 @@ const run = async () => {
 
   await page.goto(`${BASE}/projects`, { waitUntil: "networkidle" });
   check("projects page shows 12 cards", (await page.locator(".project-card").count()) === 12);
+  check("every project card has a hire link", (await page.locator(".project-card__hire").count()) === 12);
+  check(
+    "three cards link to case studies",
+    (await page.locator('.project-card a[href*="/case-studies/"]').count()) === 3
+  );
+  await page.goto(`${BASE}/projects#tamperscripts`, { waitUntil: "networkidle" });
+  await page.waitForTimeout(1500);
+  check(
+    "projects page scrolls to a card from the URL",
+    await page.evaluate(() => {
+      const top = document.getElementById("tamperscripts")?.getBoundingClientRect().top ?? -1;
+      return top >= 0 && top < window.innerHeight / 2;
+    })
+  );
 
   await page.goto(`${BASE}/work-with-me`, { waitUntil: "networkidle" });
   check("brief form present", (await page.locator(".brief-form").count()) === 1);

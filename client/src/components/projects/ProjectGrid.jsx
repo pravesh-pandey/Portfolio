@@ -1,11 +1,25 @@
-import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { motion, useReducedMotion } from "framer-motion";
+import { caseStudies } from "@data/caseStudies.js";
 import "./projectGrid.css";
 
-export const ProjectGrid = ({ projects }) => (
-  <div className="project-grid">
-    {projects.map((project, index) => {
-      const CardContent = (
-        <>
+const caseStudySlugs = new Set(caseStudies.map((study) => study.slug));
+
+export const ProjectGrid = ({ projects }) => {
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <div className="project-grid">
+      {projects.map((project, index) => (
+        <motion.article
+          key={project.slug}
+          id={project.slug}
+          className="project-card"
+          initial={{ opacity: reduceMotion ? 1 : 0, y: reduceMotion ? 0 : 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.4, delay: (index % 3) * 0.08, ease: "easeOut" }}
+        >
           <div className="project-card__header">
             <h3>{project.title}</h3>
             <p>{project.tagline}</p>
@@ -23,37 +37,23 @@ export const ProjectGrid = ({ projects }) => (
               </span>
             ))}
           </div>
-          {project.link && (
-            <div className="project-card__link">
-              <span>View on GitHub →</span>
-            </div>
-          )}
-        </>
-      );
-
-      const cardProps = {
-        key: project.title,
-        className: `project-card ${project.link ? "project-card--clickable" : ""}`,
-        initial: { opacity: 0, y: 40 },
-        whileInView: { opacity: 1, y: 0 },
-        viewport: { once: true, margin: "-60px" },
-        transition: { duration: 0.6, delay: index * 0.12, ease: "easeOut" },
-      };
-
-      return project.link ? (
-        <motion.a
-          {...cardProps}
-          href={project.link}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {CardContent}
-        </motion.a>
-      ) : (
-        <motion.article {...cardProps}>
-          {CardContent}
+          <div className="project-card__links">
+            {caseStudySlugs.has(project.slug) && (
+              <Link className="project-card__link" to={`/case-studies/${project.slug}`}>
+                read case study →
+              </Link>
+            )}
+            {project.link && (
+              <a className="project-card__link" href={project.link} target="_blank" rel="noopener noreferrer">
+                view on GitHub →
+              </a>
+            )}
+            <Link className="project-card__hire" to="/work-with-me">
+              need this? → hire
+            </Link>
+          </div>
         </motion.article>
-      );
-    })}
-  </div>
-);
+      ))}
+    </div>
+  );
+};
